@@ -37,6 +37,7 @@ function App() {
   return (
     <div className="h-svh w-svw flex flex-col">
       <h1 className="text-sky-500 text-2xl m-3">Chill Gcode Viewer</h1>
+      <input type="file" className="file-input file-input-bordered file-input-sm w-full max-w-sm mt-1 ml-2 mb-2" />
       <div className="flex h-full w-full">
         <div ref={editorRef} className="w-2/6 border p-1 rounded-lg h-full">
          {
