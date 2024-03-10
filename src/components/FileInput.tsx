@@ -9,7 +9,7 @@ function FileInput({handleChnageFile}:FileInputType) {
 
   return (
     <>
-      <button className="btn btn-primary w-2/12 btn-sm m-3" onClick={() => inputFileRef.current?.click()} >
+      <button className="btn btn-primary btn-sm m-1" onClick={() => inputFileRef.current?.click()} >
         ファイルを選択
       </button>
       <input type="file" ref={inputFileRef} style={{ display: 'none' }} onChange={handleChnageFile} />

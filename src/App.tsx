@@ -14,7 +14,7 @@ function App() {
 
 
   return (
-    <div className="h-svh w-svw flex flex-col">
+    <div className="h-svh w-svw">
         <MainGcodeEV></MainGcodeEV>
     </div>
   );

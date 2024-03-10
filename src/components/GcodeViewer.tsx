@@ -1,7 +1,9 @@
 import * as THREE from 'three'
+import { Vector3 , DoubleSide} from 'three'
 import { createRoot } from 'react-dom/client'
 import React, { useRef, useState } from 'react'
 import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
+import { Grid, OrbitControls, TransformControls, CameraControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
 
 function Box(props: ThreeElements['mesh']) {
   const meshRef = useRef<THREE.Mesh>(null!)
@@ -24,13 +26,23 @@ function Box(props: ThreeElements['mesh']) {
 
 function GcodeViewer({height, width}:any) {
   return (
-      <Canvas style={{height:`${height}px`, width:`${width}px`}}>
-        <ambientLight intensity={Math.PI / 2} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Box position={[-1.2, 0, 0]} />
-        <Box position={[1.2, 0, 0]} />
-      </Canvas>
+    <Canvas 
+      style={{height:`${height}px`, width:`${width}px`}}
+      camera={{ position: new Vector3(-50, 50, 50),  up: new Vector3(0, 0, 1), fov: 75, far: 1000}}
+    >
+      <Grid cellColor="white" cellSize={1} sectionSize={10} args={[150, 150]} side={DoubleSide} fadeDistance={1000} rotation={[Math.PI/2, 0, 0]} />
+      <ambientLight />
+      <pointLight position={[100, 100, 100]} intensity={10000}/>
+      <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+
+      <Box position={[-1.2, 0, 0]} />
+      <Box position={[1.2, 0, 0]} />
+      <OrbitControls makeDefault></OrbitControls>
+      <axesHelper args={[5]} />
+      <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
+        <GizmoViewport {...{ axisColors: ["#f73b3b", "#3bf751", "#3b87f7"]}} />
+      </GizmoHelper>
+    </Canvas>
   )
 }
 
