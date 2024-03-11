@@ -8,6 +8,8 @@ import { Grid, OrbitControls, TransformControls, CameraControls, GizmoHelper, Gi
 import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
+import LineSegmentObject from './ViewerObjects/LineSegmentObject'
+
 function Box(props: ThreeElements['mesh']) {
   const meshRef = useRef<THREE.Mesh>(null!)
   const [hovered, setHover] = useState(false)
@@ -29,16 +31,24 @@ function Box(props: ThreeElements['mesh']) {
 
 function GcodeViewer({height, width}:any) {
   const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+  const canvas_size:any = [1000, 1000]
 
   return (
     <Canvas 
       style={{height:`${height}px`, width:`${width}px`}}
-      camera={{ position: new Vector3(-50, 50, 50),  up: new Vector3(0, 0, 1), fov: 75, far: 1000}}
+      camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, far: 10000}}
     >
-      <Grid cellColor="white" cellSize={1} sectionSize={10} args={[150, 150]} side={DoubleSide} fadeDistance={1000} rotation={[Math.PI/2, 0, 0]} />
+      <Grid cellColor="white" cellSize={1} sectionSize={10} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
       <ambientLight />
       <pointLight position={[100, 100, 100]} intensity={10000}/>
       <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+      {
+        viewerObjects.map( (vo:any)=> {
+          return (
+            <LineSegmentObject data={vo} />
+          )
+        })
+      }
 
       <Box position={[-1.2, 0, 0]} />
       <Box position={[1.2, 0, 0]} />

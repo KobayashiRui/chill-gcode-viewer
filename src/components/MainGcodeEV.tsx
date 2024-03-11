@@ -1,12 +1,31 @@
-import {useEffect, useState, useRef } from "react";
+import {useEffect, useState, useRef, useMemo } from "react";
 
-import { useRecoilState } from 'recoil';
-import { gcodeState } from '../atoms/GcodeState';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { gcodeState, printResultState } from '../atoms/GcodeState';
 
 import GcodeEditor from "./GcodeEditor";
 import GcodeViewer from "./GcodeViewer";
 import FileInput from "./FileInput";
 import GcodeToPath from "./GcodeToPath"
+
+function secToDayTime(seconds:number) {
+  const day = Math.floor(seconds / 86400);
+  const hour = Math.floor(seconds % 86400 / 3600);
+  const min = Math.floor(seconds % 3600 / 60);
+  const sec = seconds % 60;
+  let time = '';
+  // day が 0 の場合は「日」は出力しない（hour や min も同様）
+  if(day !== 0) {
+    time = `${day}日${hour}時間${min}分${sec.toFixed(2)}秒`;
+  }else if(hour !==0 ) {
+    time = `${hour}時間${min}分${sec.toFixed(2)}秒`;
+  }else if(min !==0) {
+    time = `${min}分${sec.toFixed(2)}秒`;
+  }else {
+    time = `${sec.toFixed(2)}秒`;
+  }
+  return time;
+}
 
 function MainGcodeEV() {
   const editorRef = useRef<any>(null);
@@ -21,6 +40,9 @@ function MainGcodeEV() {
 
   //const [gcodeData, setGcodeData] = useState<string>("")
   const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
+  const printResult = useRecoilValue(printResultState)
+
+  const memoPrintTime = useMemo(() => secToDayTime(printResult.print_time), [printResult])
 
   useEffect(() => {
     function handleResize() {
@@ -66,6 +88,24 @@ function MainGcodeEV() {
             <div className="flex items-center border p-0.5">
               <FileInput handleChnageFile={handleChnageFile}></FileInput>
               <GcodeToPath></GcodeToPath>
+            </div>
+            <div className="flex items-center border p-0.5">
+              <div className="flex text-black mx-3 my-1">
+                <div className="bg-emerald-500 rounded-l-lg p-1">
+                  造形時間
+                </div>
+                <div className="bg-emerald-200 rounded-r-lg p-1">
+                  {memoPrintTime}
+                </div>
+              </div>
+              <div className="flex text-black mx-3 my-1">
+                <div className="bg-teal-500 rounded-l-lg p-1">
+                  フィラメント長さ
+                </div>
+                <div className="bg-teal-200 rounded-r-lg p-1">
+                  {printResult.filament_length.toFixed(2)}mm
+                </div>
+              </div>
             </div>
             <div ref={editorRef} className="grow w-full border p-0.5">
               <GcodeEditor height={editorHeight} width={editorWidth}></GcodeEditor>

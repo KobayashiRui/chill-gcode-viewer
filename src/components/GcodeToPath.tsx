@@ -1,22 +1,32 @@
 import React from "react"
-import { Vector3} from "three";
+import {LineSegments, BufferGeometry, BufferAttribute, LineBasicMaterial, Vector3, Matrix4} from 'three';
 import { useRecoilValue, useRecoilState} from "recoil"
-import { gcodeState, viewerObjectsState} from '../atoms/GcodeState';
+import { gcodeState, viewerObjectsState, printResultState} from '../atoms/GcodeState';
 
+function getPositions(pos_list: Vector3[]){
+  let new_positions:number[] = []
+  for(let i = 0; i < pos_list.length; i++){
+    new_positions = new_positions.concat(pos_list[i].toArray())
+  }
+
+  return new Float32Array(new_positions)
+}
 
 function GcodeToPath(){
   const gcodeData = useRecoilValue(gcodeState)
   const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+  const [printResult, setPrintResult] = useRecoilState(printResultState)
 
   const handleLoadGcodeToPath = () => {
     console.log("start gcode to path")
 
-    let new_lines:any = {}
+    let new_lines:any = []
 
     let row_index = 0;
     const now_pos = new Vector3(0.0, 0.0, 0.0)
     let now_speed = 0.0
     let all_time = 0.0 //プリント造形時間(秒)
+    let filament_length = 0.0
 
     const gcode_lines = gcodeData.split('\n')
     for(let i =0; i < gcode_lines.length; i++){
@@ -69,7 +79,11 @@ function GcodeToPath(){
             let move_length = move_vec.length();
             let time = move_length / now_speed; // time sec
             all_time += time;
-            new_lines[i] = {"type": 0, "data": [now_pos.clone(), target_pos.clone()]}
+            filament_length += new_e
+
+            const line_color = new_e > 0.0 ? "#3cb371" : "#ff69b4"
+            const line_width = new_e > 0.0 ? 8.0 : 2.0
+            new_lines.push({"index": i, "type": 0, "points": [now_pos.clone(), target_pos.clone()], "color": line_color, "width": line_width })
             now_pos.copy(target_pos);
           break;
           }
@@ -95,6 +109,7 @@ function GcodeToPath(){
     console.log("new lines: ", new_lines)
     setViewerObjects(new_lines)
     console.log("All time: " + all_time)
+    setPrintResult({print_time: all_time, filament_length: filament_length, filament_weight: 0})
     console.log("end gcode to path")
 
   }

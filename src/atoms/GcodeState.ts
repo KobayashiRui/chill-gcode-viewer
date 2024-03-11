@@ -7,5 +7,14 @@ export const gcodeState = atom({
 
 export const viewerObjectsState = atom<any>({
   key: 'viewerObjectsState',
-  default: {}
+  default: []
+})
+
+export const printResultState = atom<any>({
+  key: 'printResultState',
+  default: {
+    print_time: 0,
+    filament_length: 0,
+    filament_weight: 0,
+  }
 })
