@@ -1,17 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 //import { javascript } from '@codemirror/lang-javascript';
+import { useRecoilState } from 'recoil';
+import { gcodeState } from '../atoms/GcodeState';
 
-function GcodeEditor({height, width, gcode_data}:any) {
+function GcodeEditor({height, width}:any) {
 
-  const [value, setValue] = useState(gcode_data);
+  //const [value, setValue] = useState(gcode_data);
+  const [value, setValue] = useRecoilState(gcodeState)
   console.log(height)
-
-  useEffect(()=>{
-    console.log("update!")
-    setValue(gcode_data)
-
-  }, [gcode_data])
 
   const onChange = React.useCallback((val, viewUpdate) => {
     //console.log('val:', val);

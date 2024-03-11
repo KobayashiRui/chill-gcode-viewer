@@ -5,6 +5,9 @@ import React, { useRef, useState } from 'react'
 import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
 import { Grid, OrbitControls, TransformControls, CameraControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
 
+import { useRecoilState} from "recoil"
+import { viewerObjectsState} from '../atoms/GcodeState';
+
 function Box(props: ThreeElements['mesh']) {
   const meshRef = useRef<THREE.Mesh>(null!)
   const [hovered, setHover] = useState(false)
@@ -25,6 +28,8 @@ function Box(props: ThreeElements['mesh']) {
 }
 
 function GcodeViewer({height, width}:any) {
+  const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+
   return (
     <Canvas 
       style={{height:`${height}px`, width:`${width}px`}}

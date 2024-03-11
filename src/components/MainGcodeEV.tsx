@@ -1,4 +1,8 @@
 import {useEffect, useState, useRef } from "react";
+
+import { useRecoilState } from 'recoil';
+import { gcodeState } from '../atoms/GcodeState';
+
 import GcodeEditor from "./GcodeEditor";
 import GcodeViewer from "./GcodeViewer";
 import FileInput from "./FileInput";
@@ -15,7 +19,8 @@ function MainGcodeEV() {
   const [startLayerNum, setStartLayerNum] = useState(0);
   const [endLayerNum, setEndLayerNum] = useState(0);
 
-  const [gcodeData, setGcodeData] = useState<string>("")
+  //const [gcodeData, setGcodeData] = useState<string>("")
+  const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
 
   useEffect(() => {
     function handleResize() {
@@ -44,7 +49,6 @@ function MainGcodeEV() {
     // ファイル読み込み完了時に発火するリスナー
     reader.addEventListener("load", () => {
       setGcodeData(typeof reader.result === "string" ? reader.result : "");
-      console.log(reader.result)
       event.target.value = "";
     });
     reader.readAsText(file);
@@ -64,7 +68,7 @@ function MainGcodeEV() {
               <GcodeToPath></GcodeToPath>
             </div>
             <div ref={editorRef} className="grow w-full border p-0.5">
-              <GcodeEditor height={editorHeight} width={editorWidth} gcode_data={gcodeData}></GcodeEditor>
+              <GcodeEditor height={editorHeight} width={editorWidth}></GcodeEditor>
             </div>
             <div className="border p-1  pb-10">
               <h2>view control</h2>
