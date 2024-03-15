@@ -8,7 +8,7 @@ import { Grid, OrbitControls, TransformControls, CameraControls, GizmoHelper, Gi
 import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
-import LineSegmentObject from './ViewerObjects/LineSegmentObject'
+import LineSegmentObject from './LineSegmentObject/LineSegmentObject'
 
 function Box(props: ThreeElements['mesh']) {
   const meshRef = useRef<THREE.Mesh>(null!)
