@@ -42,16 +42,15 @@ function GcodeViewer({height, width}:any) {
       <ambientLight />
       <pointLight position={[100, 100, 100]} intensity={10000}/>
       <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-      {
-        viewerObjects.map( (vo:any)=> {
-          return (
-            <LineSegmentObject data={vo} />
-          )
-        })
-      }
-
-      <Box position={[-1.2, 0, 0]} />
-      <Box position={[1.2, 0, 0]} />
+      <group >
+        {
+          viewerObjects.map( (vo:any, vi:number)=> {
+            return (
+              <LineSegmentObject key={vi} data={vo} />
+            )
+          })
+        }
+      </group>
       <OrbitControls makeDefault></OrbitControls>
       <axesHelper args={[5]} />
       <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
