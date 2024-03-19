@@ -9,6 +9,7 @@ import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
 import LineSegmentObject from './LineSegmentObject/LineSegmentObject'
+import LineSegments from './LineSegmentsObject/LineSegments'
 
 function Box(props: ThreeElements['mesh']) {
   const meshRef = useRef<THREE.Mesh>(null!)
@@ -42,6 +43,7 @@ function GcodeViewer({height, width}:any) {
       <ambientLight />
       <pointLight position={[100, 100, 100]} intensity={10000}/>
       <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+      <LineSegments></LineSegments>
       <group >
         {
           viewerObjects.map( (vo:any, vi:number)=> {
