@@ -4,6 +4,7 @@ import { shaderMaterial } from '@react-three/drei';
 import {useThree, extend } from '@react-three/fiber';
 import vertexShader from './shaders/vert_shader.glsl?raw'
 import fragmentShader from './shaders/frag_shader.glsl?raw'
+import { Box3, Box3Helper } from 'three';
 
 const MyCustomMaterial = shaderMaterial(
   {
@@ -14,15 +15,120 @@ const MyCustomMaterial = shaderMaterial(
 );
 
 extend({ MyCustomMaterial });
+extend({ Box3Helper });
+
+function BoundingBoxHelper({ objectRef }:any) {
+  const { scene } = useThree();
+  console.log(objectRef)
+
+  useEffect(() => {
+    if (objectRef.current) {
+      // バウンディングボックスを計算
+      const box = new Box3().setFromObject(objectRef.current);
+      
+      // バウンディングボックスのヘルパーを作成
+      const helper = new Box3Helper(box, 0xffff00); // 黄色のバウンディングボックス
+      
+      // ヘルパーをシーンに追加
+      scene.add(helper);
+
+      const sphere = objectRef.current.geometry.boundingSphere
+      const sphereGeometry = new THREE.SphereGeometry(sphere.radius, 32, 32);
+      const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphereMesh.position.copy(sphere.center);
+      scene.add(sphereMesh);
+
+      // クリーンアップ関数
+      return () => {
+        scene.remove(helper);
+      };
+    }
+  }, [objectRef.current, scene]);
+
+  return null;
+}
+
+function computeBoundingBox(segments:any[]) {
+  let min = new THREE.Vector3(Infinity, Infinity, Infinity);
+  let max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
+  for(let i = 0; i < segments.length; i++){
+    for(let j = 0; j < segments[i].points.length; j++){
+      const vertex = segments[i].points[j]
+      min.min(vertex)
+      max.max(vertex)
+    }
+  }
+
+  console.log("min:", min, ", max:",max)
+
+  return new THREE.Box3(min, max);
+}
+
+
 
 type LineSegmentsPropsTypes = {
   lineSegments: any
 }
 
 export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
-  const meshRef = useRef<any>();
+  const meshRef = useRef<any>(null);
 
-  const { size } = useThree(); // Three.jsのレンダラーからサイズを取得
+  const { size, gl, camera, raycaster, pointer} = useThree(); // Three.jsのレンダラーからサイズを取得
+
+  //useEffect(() => {
+  //  if (!meshRef.current) return;
+
+  //  // オリジナルの raycast メソッドを保存
+  //  const originalRaycast = meshRef.current.raycast;
+
+  //  // カスタム raycast メソッド
+  //  meshRef.current.raycast = (raycaster:any, intersects:any) => {
+  //    three_raycast.setFromCamera( mouse, camera );
+  //    const intersection = three_raycast.intersectObject( meshRef.current );
+  //    console.log("intersection:",intersection)
+
+  //    const testIntersect = {
+  //      distance: 10, // 仮の距離
+  //      point: new THREE.Vector3(0, 0, 0), // 仮の交差点
+  //      object: meshRef.current // 当該オブジェクト
+  //    };
+
+  //    intersects.push(testIntersect);
+  //  };
+
+  //  return () => {
+  //    // コンポーネントのアンマウント時にオリジナルのraycastに戻す
+  //    if (meshRef.current) {
+  //      meshRef.current.raycast = originalRaycast;
+  //    }
+  //  };
+
+  //}, [meshRef.current]);
+  // レイキャストとインスタンスIDの検出ロジック
+  useEffect(() => {
+    const handleMouseDown = (event:any) => {
+      console.log("mouse down!!")
+      console.log(pointer)
+      raycaster.setFromCamera(pointer, camera);
+
+      const intersects = raycaster.intersectObject(meshRef.current, true);
+      console.log(intersects)
+
+      if (intersects.length > 0) {
+        console.log("Clicked on InstancedMesh");
+        const instanceId = intersects[0].instanceId;
+        console.log("Instance ID:", instanceId);
+      }
+    };
+
+    gl.domElement.addEventListener('mousedown', handleMouseDown);
+
+    return () => {
+      gl.domElement.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [gl, camera]);
+
 
 
   //const numInstances = 100;
@@ -64,7 +170,6 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
 
     const buffer_array = new Float32Array(lineSegments.length * 10);
     for (let i = 0; i < lineSegments.length; i++) {
-      console.log(lineSegments[i])
       // pointAの座標を設定
       buffer_array[i * 10 + 0] = lineSegments[i].points[0].x;
       buffer_array[i * 10 + 1] = lineSegments[i].points[0].y;
@@ -91,20 +196,24 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
     tempGeometry.setAttribute('color', new THREE.InterleavedBufferAttribute(interleavedBuffer, 3, 6)); // オフセット3から開始
     tempGeometry.setAttribute('width', new THREE.InterleavedBufferAttribute(interleavedBuffer, 1, 9)); // オフセット3から開始
 
-    tempGeometry.computeBoundingBox();
-    tempGeometry.computeBoundingSphere(); 
+    const get_bounding_box = computeBoundingBox(lineSegments)
+    tempGeometry.boundingBox = get_bounding_box
+    const get_bounding_sphere = new THREE.Sphere();
+    get_bounding_box.getBoundingSphere(get_bounding_sphere)
+    tempGeometry.boundingSphere = get_bounding_sphere
+
     return tempGeometry;
   }, [lineSegments, size]);
 
-  useEffect(() => {
-    // meshRef.currentが存在する場合、frustumCulledをfalseに設定
-    if (meshRef.current) {
-      meshRef.current.frustumCulled = false;
-    }
-  }, [geometry]);
+  const handleClick = (event:any) => {
+    console.log("handleClick")
+    console.log(event)
+  }
 
   return (
-    <instancedMesh ref={meshRef} args={[geometry, material, lineSegments.length]}>
+    <>
+    <instancedMesh ref={meshRef} args={[geometry, material, lineSegments.length]} onClick={handleClick}>
     </instancedMesh>
+    </>
   )
 }
