@@ -2,13 +2,15 @@ uniform vec2 resolution;
 
 attribute vec3 pointA;
 attribute vec3 pointB;
+attribute vec3 color;
+attribute float width;
 
 attribute vec3 instanceColor;
 
 varying vec3 vColor;
 
 void main() {
-  float width = 8.0;
+  //float width0 = 2.0;
   vec4 clip0 = projectionMatrix * modelViewMatrix * vec4(pointA, 1.0);
   vec4 clip1 = projectionMatrix * modelViewMatrix * vec4(pointB, 1.0);
   
@@ -26,5 +28,5 @@ void main() {
   
   gl_Position = vec4(clip.w * (2.0 * pt/resolution - 1.0), clip.z, clip.w);
 
-  vColor = instanceColor;
+  vColor = color;
 }

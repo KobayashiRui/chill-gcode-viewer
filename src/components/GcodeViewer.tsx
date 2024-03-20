@@ -37,22 +37,24 @@ function GcodeViewer({height, width}:any) {
   return (
     <Canvas 
       style={{height:`${height}px`, width:`${width}px`}}
-      camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, far: 10000}}
+      camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, near:0.1, far: 10000}}
     >
       <Grid cellColor="white" cellSize={1} sectionSize={10} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
       <ambientLight />
-      <pointLight position={[100, 100, 100]} intensity={10000}/>
-      <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-      <LineSegments></LineSegments>
-      <group >
-        {
-          viewerObjects.map( (vo:any, vi:number)=> {
-            return (
-              <LineSegmentObject key={vi} data={vo} />
-            )
-          })
-        }
-      </group>
+      <LineSegments
+        lineSegments={viewerObjects}
+      ></LineSegments>
+      {
+      //<group >
+      //  {
+      //    viewerObjects.map( (vo:any, vi:number)=> {
+      //      return (
+      //        <LineSegmentObject key={vi} data={vo} />
+      //      )
+      //    })
+      //  }
+      //</group>
+      }
       <OrbitControls makeDefault></OrbitControls>
       <axesHelper args={[5]} />
       <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
