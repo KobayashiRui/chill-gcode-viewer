@@ -1,7 +1,7 @@
 import {useEffect, useState, useRef, useMemo } from "react";
 
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { gcodeState, printResultState } from '../atoms/GcodeState';
+import { gcodeState, printResultState, viewerObjectsState, viewControlState } from '../atoms/GcodeState';
 
 import GcodeEditor from "./GcodeEditor";
 import GcodeViewer from "./GcodeViewer";
@@ -37,6 +37,8 @@ function MainGcodeEV() {
 
   const [startLayerNum, setStartLayerNum] = useState(0);
   const [endLayerNum, setEndLayerNum] = useState(0);
+  const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+  const [viewControl, setViewControl] = useRecoilState(viewControlState)
 
   //const [gcodeData, setGcodeData] = useState<string>("")
   const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
@@ -77,6 +79,35 @@ function MainGcodeEV() {
 
   }
 
+  const handleChangeViewStartLayer = (e:any)=>{
+    setViewControl((prev:any)=>{
+      const new_prev = {...prev}
+      new_prev.start_layer =  parseInt(e.target.value)
+      return new_prev
+    })
+
+  }
+  const handleChangeViewEndLayer = (e:any)=>{
+
+    setViewControl((prev:any)=>{
+      const new_prev = {...prev}
+      new_prev.end_layer =  parseInt(e.target.value)
+      return new_prev
+    })
+  }
+
+  const handleChangeViewMode = (e:any)=>{
+    console.log("changeViewMode:",e.target.value)
+    console.log(typeof e.target.value)
+    setViewControl((prev:any)=>{
+      const new_prev = {...prev}
+      new_prev.mode =  parseInt(e.target.value)
+      return new_prev
+    })
+    
+
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="grow-0">
@@ -112,12 +143,30 @@ function MainGcodeEV() {
             </div>
             <div className="border p-1  pb-10">
               <h2>view control</h2>
-              <label>
-                start layer:
-                <input type="range" min={0} max="100" step="1" value={startLayerNum} className="range range-xs" onChange={(e:any)=>{setStartLayerNum(parseInt(e.target.value))}} /> 
-              </label>
-                end layer:
-                <input type="range" min={0} max="100" step="1" value={endLayerNum} className="range range-xs" onChange={(e:any)=>{setEndLayerNum(parseInt(e.target.value))}}/> 
+              <div className="flex flex-col">
+                <label className="label cursor-pointer">
+                  <span className="label-text">All mode</span> 
+                  <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-red-500" value={0}  checked={viewControl["mode"] === 0} onChange={handleChangeViewMode}/>
+                </label>
+                <label className="label cursor-pointer">
+                  <span className="label-text">Single mode</span> 
+                  <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-blue-500" value={1}  checked={viewControl["mode"] === 1} onChange={handleChangeViewMode}/>
+                </label>
+                <label className="label cursor-pointer">
+                  <span className="label-text">Range mode</span> 
+                  <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-green-500" value={2}  checked={viewControl["mode"] === 2} onChange={handleChangeViewMode}/>
+                </label>
+              </div>
+              <div className="flex items-center">
+                <span className="text-nowrap mr-2">start layer:</span>
+                <input className="mr-2" type="number" min={0} max={viewerObjects.length} step="1" value={viewControl["start_layer"]} onChange={handleChangeViewStartLayer}></input>
+                <input type="range" min={0} max={viewerObjects.length} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
+              </div>
+              <div className="flex items-center">
+                <span className="text-nowrap mr-2">end layer:</span>
+                <input className="mr-2" type="number" min={0} max={viewerObjects.length} step="1" value={viewControl["end_layer"]} onChange={handleChangeViewEndLayer}></input>
+                <input type="range" min={0} max={viewerObjects.length} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
+              </div>
             </div>
           </div>
           <div ref={viewerRef} className="flex-1 border p-0.5">

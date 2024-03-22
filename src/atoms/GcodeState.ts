@@ -18,3 +18,12 @@ export const printResultState = atom<any>({
     filament_weight: 0,
   }
 })
+
+export const viewControlState = atom<any>({
+  key: 'viewControlState',
+  default: {
+    mode: 0, // 0: complete show,  1: single row, 2: range show
+    start_layer: 0,
+    end_layer: 0,
+  }
+})
