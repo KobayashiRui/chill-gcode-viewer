@@ -35,20 +35,19 @@ function MainGcodeEV() {
   const [viewerWidth, setViewerWidth] = useState(0);
   const [editorWidth, setEditorWidth] = useState(0);
 
-  const [startLayerNum, setStartLayerNum] = useState(0);
-  const [endLayerNum, setEndLayerNum] = useState(0);
-  const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+  const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const [viewControl, setViewControl] = useRecoilState(viewControlState)
 
   //const [gcodeData, setGcodeData] = useState<string>("")
-  const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
+  const [_gcodeData, setGcodeData] = useRecoilState(gcodeState)
   const printResult = useRecoilValue(printResultState)
 
   const memoPrintTime = useMemo(() => secToDayTime(printResult.print_time), [printResult])
 
   useEffect(() => {
     function handleResize() {
-     if(editorRef.current) {
+     if(editorRef.current && viewerRef.current) {
+        console.log("resize window:", editorRef.current.clientHeight, ",", editorRef.current.clientWidth)
         setEditorHeight(editorRef.current.clientHeight-10); // 親要素の現在の高さをセット
         setViewHeight(viewerRef.current.clientHeight-20); // 親要素の現在の高さをセット
         setEditorWidth(window.innerWidth * 2.0/6.0 - 10)
@@ -79,23 +78,34 @@ function MainGcodeEV() {
 
   }
 
+  //TODO: end layer以上にならないようにする
+  // 以上になったらend layer側を増加させる
   const handleChangeViewStartLayer = (e:any)=>{
     setViewControl((prev:any)=>{
       const new_prev = {...prev}
       new_prev.start_layer =  parseInt(e.target.value)
+      if(prev.mode === 1){
+        new_prev.end_layer = parseInt(e.target.value)
+      }
       return new_prev
     })
 
   }
-  const handleChangeViewEndLayer = (e:any)=>{
 
+  //TODO: start layer以下にならないようにする
+  // 以下になったらstart layer側を減少させる
+  const handleChangeViewEndLayer = (e:any)=>{
     setViewControl((prev:any)=>{
       const new_prev = {...prev}
       new_prev.end_layer =  parseInt(e.target.value)
+      if(prev.mode === 1){
+        new_prev.start_layer = parseInt(e.target.value)
+      }
       return new_prev
     })
   }
 
+  //TODO: modeが変わったらステータスの状態を変更する
   const handleChangeViewMode = (e:any)=>{
     console.log("changeViewMode:",e.target.value)
     console.log(typeof e.target.value)
@@ -142,30 +152,30 @@ function MainGcodeEV() {
               <GcodeEditor height={editorHeight} width={editorWidth}></GcodeEditor>
             </div>
             <div className="border p-1  pb-10">
-              <h2>view control</h2>
+              <h2 className="text-md text-gray-200 underline underline-offset-2">View control</h2>
               <div className="flex flex-col">
-                <label className="label cursor-pointer">
+                <label className="label p-0.5 cursor-pointer">
                   <span className="label-text">All mode</span> 
                   <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-red-500" value={0}  checked={viewControl["mode"] === 0} onChange={handleChangeViewMode}/>
                 </label>
-                <label className="label cursor-pointer">
+                <label className="label p-0.5 cursor-pointer">
                   <span className="label-text">Single mode</span> 
                   <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-blue-500" value={1}  checked={viewControl["mode"] === 1} onChange={handleChangeViewMode}/>
                 </label>
-                <label className="label cursor-pointer">
+                <label className="label p-0.5 cursor-pointer">
                   <span className="label-text">Range mode</span> 
                   <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-green-500" value={2}  checked={viewControl["mode"] === 2} onChange={handleChangeViewMode}/>
                 </label>
               </div>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">start layer:</span>
-                <input className="mr-2" type="number" min={0} max={viewerObjects.length} step="1" value={viewControl["start_layer"]} onChange={handleChangeViewStartLayer}></input>
-                <input type="range" min={0} max={viewerObjects.length} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
+                <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} onChange={handleChangeViewStartLayer}></input>
+                <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
               </div>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">end layer:</span>
-                <input className="mr-2" type="number" min={0} max={viewerObjects.length} step="1" value={viewControl["end_layer"]} onChange={handleChangeViewEndLayer}></input>
-                <input type="range" min={0} max={viewerObjects.length} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
+                <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} onChange={handleChangeViewEndLayer}></input>
+                <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
               </div>
             </div>
           </div>

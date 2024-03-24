@@ -1,5 +1,4 @@
-import React, {useRef} from "react"
-import {LineSegments, BufferGeometry, BufferAttribute, LineBasicMaterial, Vector4, Matrix4} from 'three';
+import {useRef} from "react"
 import { Line, useBVH } from "@react-three/drei";
 
 

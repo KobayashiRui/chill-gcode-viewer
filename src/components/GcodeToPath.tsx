@@ -1,28 +1,27 @@
-import React from "react"
-import {LineSegments, BufferGeometry, BufferAttribute, LineBasicMaterial, Vector3, Matrix4} from 'three';
+import {Vector3} from 'three';
 import { useRecoilValue, useRecoilState} from "recoil"
 import { gcodeState, viewerObjectsState, printResultState} from '../atoms/GcodeState';
 
-function getPositions(pos_list: Vector3[]){
-  let new_positions:number[] = []
-  for(let i = 0; i < pos_list.length; i++){
-    new_positions = new_positions.concat(pos_list[i].toArray())
-  }
-
-  return new Float32Array(new_positions)
-}
+//function getPositions(pos_list: Vector3[]){
+//  let new_positions:number[] = []
+//  for(let i = 0; i < pos_list.length; i++){
+//    new_positions = new_positions.concat(pos_list[i].toArray())
+//  }
+//
+//  return new Float32Array(new_positions)
+//}
 
 function GcodeToPath(){
   const gcodeData = useRecoilValue(gcodeState)
-  const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
-  const [printResult, setPrintResult] = useRecoilState(printResultState)
+  const [_viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+  const [_printResult, setPrintResult] = useRecoilState(printResultState)
 
   const handleLoadGcodeToPath = () => {
     console.log("start gcode to path")
 
     let new_lines:any = []
 
-    let row_index = 0;
+    //let row_index = 0;
     const now_pos = new Vector3(0.0, 0.0, 0.0)
     let now_speed = 0.0
     let all_time = 0.0 //プリント造形時間(秒)

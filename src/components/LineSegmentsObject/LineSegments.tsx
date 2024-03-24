@@ -1,10 +1,12 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import {useThree, extend } from '@react-three/fiber';
 import vertexShader from './shaders/vert_shader.glsl?raw'
 import fragmentShader from './shaders/frag_shader.glsl?raw'
-import { Box3, Box3Helper } from 'three';
+import { Box3Helper } from 'three';
+import { useRecoilState } from 'recoil';
+import { viewControlState } from '../../atoms/GcodeState';
 
 const MyCustomMaterial = shaderMaterial(
   {
@@ -17,37 +19,37 @@ const MyCustomMaterial = shaderMaterial(
 extend({ MyCustomMaterial });
 extend({ Box3Helper });
 
-function BoundingBoxHelper({ objectRef }:any) {
-  const { scene } = useThree();
-  console.log(objectRef)
-
-  useEffect(() => {
-    if (objectRef.current) {
-      // バウンディングボックスを計算
-      const box = new Box3().setFromObject(objectRef.current);
-      
-      // バウンディングボックスのヘルパーを作成
-      const helper = new Box3Helper(box, 0xffff00); // 黄色のバウンディングボックス
-      
-      // ヘルパーをシーンに追加
-      scene.add(helper);
-
-      const sphere = objectRef.current.geometry.boundingSphere
-      const sphereGeometry = new THREE.SphereGeometry(sphere.radius, 32, 32);
-      const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      sphereMesh.position.copy(sphere.center);
-      scene.add(sphereMesh);
-
-      // クリーンアップ関数
-      return () => {
-        scene.remove(helper);
-      };
-    }
-  }, [objectRef.current, scene]);
-
-  return null;
-}
+//function BoundingBoxHelper({ objectRef }:any) {
+//  const { scene } = useThree();
+//  console.log(objectRef)
+//
+//  useEffect(() => {
+//    if (objectRef.current) {
+//      // バウンディングボックスを計算
+//      const box = new Box3().setFromObject(objectRef.current);
+//      
+//      // バウンディングボックスのヘルパーを作成
+//      const helper = new Box3Helper(box, 0xffff00); // 黄色のバウンディングボックス
+//      
+//      // ヘルパーをシーンに追加
+//      scene.add(helper);
+//
+//      const sphere = objectRef.current.geometry.boundingSphere
+//      const sphereGeometry = new THREE.SphereGeometry(sphere.radius, 32, 32);
+//      const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+//      const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+//      sphereMesh.position.copy(sphere.center);
+//      scene.add(sphereMesh);
+//
+//      // クリーンアップ関数
+//      return () => {
+//        scene.remove(helper);
+//      };
+//    }
+//  }, [objectRef.current, scene]);
+//
+//  return null;
+//}
 
 function computeBoundingBox(segments:any[]) {
   let min = new THREE.Vector3(Infinity, Infinity, Infinity);
@@ -73,8 +75,10 @@ type LineSegmentsPropsTypes = {
 
 export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
   const meshRef = useRef<any>(null);
+  const [viewControl, _setViewControl] = useRecoilState(viewControlState)
 
-  const { size, gl, camera, raycaster, pointer} = useThree(); // Three.jsのレンダラーからサイズを取得
+  //const { size, gl, camera, raycaster, pointer} = useThree(); // Three.jsのレンダラーからサイズを取得
+  const { size} = useThree(); // Three.jsのレンダラーからサイズを取得
 
   //useEffect(() => {
   //  if (!meshRef.current) return;
@@ -106,28 +110,28 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
 
   //}, [meshRef.current]);
   // レイキャストとインスタンスIDの検出ロジック
-  useEffect(() => {
-    const handleMouseDown = (event:any) => {
-      console.log("mouse down!!")
-      console.log(pointer)
-      raycaster.setFromCamera(pointer, camera);
+  //useEffect(() => {
+  //  const handleMouseDown = (event:any) => {
+  //    console.log("mouse down!!")
+  //    console.log(pointer)
+  //    raycaster.setFromCamera(pointer, camera);
 
-      const intersects = raycaster.intersectObject(meshRef.current, true);
-      console.log(intersects)
+  //    const intersects = raycaster.intersectObject(meshRef.current, true);
+  //    console.log(intersects)
 
-      if (intersects.length > 0) {
-        console.log("Clicked on InstancedMesh");
-        const instanceId = intersects[0].instanceId;
-        console.log("Instance ID:", instanceId);
-      }
-    };
+  //    if (intersects.length > 0) {
+  //      console.log("Clicked on InstancedMesh");
+  //      const instanceId = intersects[0].instanceId;
+  //      console.log("Instance ID:", instanceId);
+  //    }
+  //  };
 
-    gl.domElement.addEventListener('mousedown', handleMouseDown);
+  //  gl.domElement.addEventListener('mousedown', handleMouseDown);
 
-    return () => {
-      gl.domElement.removeEventListener('mousedown', handleMouseDown);
-    };
-  }, [gl, camera]);
+  //  return () => {
+  //    gl.domElement.removeEventListener('mousedown', handleMouseDown);
+  //  };
+  //}, [gl, camera]);
 
 
 
@@ -145,6 +149,9 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
     console.log("create geometry")
     console.log(lineSegments)
     console.log(size)
+    if(lineSegments.length <= 0) {
+      return
+    }
 
     const tempGeometry = new THREE.BufferGeometry();
 
@@ -159,33 +166,44 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
     ]);
 
     // 2つの三角形で四角形の面を構成
-    const indices = [
-      0, 1, 2, 
-      3, 4, 5
-    ];
+    //const indices = [
+    //  0, 1, 2, 
+    //  3, 4, 5
+    //];
 
     //tempGeometry.setIndex(indices);
     tempGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     //const instancePositions = new Float32Array(numInstances * 6);
 
     const buffer_array = new Float32Array(lineSegments.length * 10);
-    for (let i = 0; i < lineSegments.length; i++) {
-      // pointAの座標を設定
-      buffer_array[i * 10 + 0] = lineSegments[i].points[0].x;
-      buffer_array[i * 10 + 1] = lineSegments[i].points[0].y;
-      buffer_array[i * 10 + 2] = lineSegments[i].points[0].z;
-      // pointBの座標を設定
-      buffer_array[i * 10 + 3] = lineSegments[i].points[1].x;
-      buffer_array[i * 10 + 4] = lineSegments[i].points[1].y;
-      buffer_array[i * 10 + 5] = lineSegments[i].points[1].z;
 
-      const color = new THREE.Color(lineSegments[i].color);
+    let show_start = 0
+    let show_end = lineSegments.length
+    if(viewControl.mode === 1){
+      show_start = viewControl.start_layer
+      show_end = 1
+    }else if(viewControl.mode === 2) {
+      show_start = viewControl.start_layer
+      show_end = viewControl.end_layer - viewControl.start_layer + 1
+    }
+
+    for (let i = 0; i < show_end; i++) {
+      // pointAの座標を設定
+      buffer_array[i * 10 + 0] = lineSegments[i+show_start].points[0].x;
+      buffer_array[i * 10 + 1] = lineSegments[i+show_start].points[0].y;
+      buffer_array[i * 10 + 2] = lineSegments[i+show_start].points[0].z;
+      // pointBの座標を設定
+      buffer_array[i * 10 + 3] = lineSegments[i+show_start].points[1].x;
+      buffer_array[i * 10 + 4] = lineSegments[i+show_start].points[1].y;
+      buffer_array[i * 10 + 5] = lineSegments[i+show_start].points[1].z;
+
+      const color = new THREE.Color(lineSegments[i+show_start].color);
       buffer_array[i * 10 + 6] = color.r;
       buffer_array[i * 10 + 7] = color.g;
       buffer_array[i * 10 + 8] = color.b;
 
-      buffer_array[i * 10 + 9] = lineSegments[i].width;
-  }
+      buffer_array[i * 10 + 9] = lineSegments[i+show_start].width;
+    }
 
     console.log(buffer_array);
 
@@ -203,7 +221,7 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
     tempGeometry.boundingSphere = get_bounding_sphere
 
     return tempGeometry;
-  }, [lineSegments, size]);
+  }, [lineSegments, size, viewControl]);
 
   const handleClick = (event:any) => {
     console.log("handleClick")

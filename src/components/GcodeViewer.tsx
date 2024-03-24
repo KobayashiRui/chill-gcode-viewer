@@ -1,38 +1,16 @@
-import * as THREE from 'three'
 import { Vector3 , DoubleSide} from 'three'
-import { createRoot } from 'react-dom/client'
-import React, { useRef, useState } from 'react'
-import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
-import { Grid, OrbitControls, TransformControls, CameraControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
+import { Canvas} from '@react-three/fiber'
+import { Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
 
 import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
-import LineSegmentObject from './LineSegmentObject/LineSegmentObject'
 import LineSegments from './LineSegmentsObject/LineSegments'
 
-function Box(props: ThreeElements['mesh']) {
-  const meshRef = useRef<THREE.Mesh>(null!)
-  const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
-  useFrame((state, delta) => (meshRef.current.rotation.x += delta))
-  return (
-    <mesh
-      {...props}
-      ref={meshRef}
-      scale={active ? 1.5 : 1}
-      onClick={(event) => setActive(!active)}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-    </mesh>
-  )
-}
-
 function GcodeViewer({height, width}:any) {
-  const [viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
+  const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const canvas_size:any = [1000, 1000]
+  console.log(height)
 
   return (
     <Canvas 
