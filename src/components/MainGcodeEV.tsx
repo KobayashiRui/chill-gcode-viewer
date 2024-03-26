@@ -200,18 +200,20 @@ function MainGcodeEV() {
                 <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} onChange={handleChangeViewStartLayer}></input>
                 <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
               </div>
+              <span>Start Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["start_layer"]]["index"]+1: 0}</span>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">end layer:</span>
                 <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} onChange={handleChangeViewEndLayer}></input>
                 <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
               </div>
+              <span>End Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["end_layer"]]["index"]+1: 0}</span>
             </div>
           </div>
           <div ref={viewerRef} className="flex-1 border p-0.5">
             <div ref={viewerRef} className="h-full w-full">
             {
               //<div className="h-full w-full">Test</div>
-              <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth} ></GcodeViewer>
+              <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
             }
             </div>
           </div>

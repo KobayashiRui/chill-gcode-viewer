@@ -22,10 +22,14 @@ function GcodeToPath(){
     let new_lines:any = []
 
     //let row_index = 0;
-    const now_pos = new Vector3(0.0, 0.0, 0.0)
+    let now_pos = new Vector3(0.0, 0.0, 0.0)
+    let now_e = 0.0
+
     let now_speed = 0.0
     let all_time = 0.0 //プリント造形時間(秒)
     let filament_length = 0.0
+    let pos_absolute = true // 0: absolute, 1: relative
+    let e_absolute = true 
 
     const gcode_lines = gcodeData.split('\n')
     for(let i =0; i < gcode_lines.length; i++){
@@ -41,26 +45,43 @@ function GcodeToPath(){
         //gコードの解析
         let gcode = line.split(' ')
         switch(gcode[0]){
+          case "G0":
           case "G1": {
             let target_pos = now_pos.clone() 
             let new_e = 0.0;
 
             const find_x = gcode.find((e:string) => e.includes("X"));
             if(find_x) {
-              target_pos = target_pos.setX(Number(find_x.replace("X", "")))
+              if(pos_absolute){
+                target_pos = target_pos.setX(Number(find_x.replace("X", "")))
+              }else{
+                target_pos = target_pos.setX( now_pos.x + Number(find_x.replace("X", "")))
+              }
             }
 
             const find_y = gcode.find((e:string) => e.includes("Y"));
             if(find_y) {
-              target_pos = target_pos.setY(Number(find_y.replace("Y", "")))
+              if(pos_absolute){
+                target_pos = target_pos.setY(Number(find_y.replace("Y", "")))
+              }else{
+                target_pos = target_pos.setY( now_pos.y + Number(find_y.replace("Y", "")))
+              }
             }
             const find_z = gcode.find((e:string) => e.includes("Z"));
             if(find_z) {
-              target_pos = target_pos.setZ(Number(find_z.replace("Z", "")))
+              if(pos_absolute){
+                target_pos = target_pos.setZ(Number(find_z.replace("Z", "")))
+              }else{
+                target_pos = target_pos.setZ(now_pos.z + Number(find_z.replace("Z", "")))
+              }
             }
             const find_e = gcode.find((e:string) => e.includes("E"));
             if(find_e) {
-              new_e = Number(find_e.replace("E", ""))
+              if(e_absolute){
+                new_e = Number(find_e.replace("E", "")) - now_e
+              }else{
+                new_e = Number(find_e.replace("E", ""))
+              }
             }
             const find_f = gcode.find((e:string) => e.includes("F"));
             if(find_f){
@@ -79,6 +100,7 @@ function GcodeToPath(){
             let time = move_length / now_speed; // time sec
             all_time += time;
             filament_length += new_e
+            now_e += new_e
 
             const line_color = new_e > 0.0 ? "#3cb371" : "#ff69b4"
             const line_width = new_e > 0.0 ? 5.0 : 1.0
@@ -99,6 +121,46 @@ function GcodeToPath(){
               p = Number(find_s.replace("S", ""))
             }
             all_time += (p*0.001) + s;
+            break;
+          }
+          case "G90": { //absolute position mode
+            pos_absolute = true
+            e_absolute = true
+            break;
+          }
+          case "G91": { //relative position mode
+            pos_absolute = false
+            e_absolute = false
+            break;
+          }
+          case "G92":{ //座標のリセット
+            const find_x = gcode.find((e:string) => e.includes("X"));
+            if(find_x) {
+              now_pos = now_pos.setX(Number(find_x.replace("X", "")))
+            }
+
+            const find_y = gcode.find((e:string) => e.includes("Y"));
+            if(find_y) {
+              now_pos = now_pos.setY(Number(find_y.replace("Y", "")))
+            }
+
+            const find_z = gcode.find((e:string) => e.includes("Z"));
+            if(find_z) {
+              now_pos = now_pos.setZ(Number(find_z.replace("Z", "")))
+            }
+
+            const find_e = gcode.find((e:string) => e.includes("E"));
+            if(find_e) {
+              now_e = Number(find_e.replace("E", ""))
+            }
+            break;
+          }
+          case "M82": { //E Absolute
+            e_absolute = true
+            break;
+          }
+          case "M83": { //E Relative
+            e_absolute = false
             break;
           }
         }
