@@ -27,3 +27,11 @@ export const viewControlState = atom<any>({
     end_layer: 0,
   }
 })
+
+export const selectedRowState = atom<any>({
+  key: 'selectedRow',
+  default: {
+    from: 1,
+    to: 1,
+  }
+})

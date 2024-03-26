@@ -2,13 +2,14 @@ import React, {useEffect, useRef, forwardRef, useImperativeHandle} from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 //import { javascript } from '@codemirror/lang-javascript';
 import { useRecoilState } from 'recoil';
-import { gcodeState } from '../atoms/GcodeState';
+import { gcodeState, selectedRowState } from '../atoms/GcodeState';
 
 const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
   const editorRef = useRef<any>(null)
 
   //const [value, setValue] = useState(gcode_data);
   const [value, setValue] = useRecoilState(gcodeState)
+  const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
   console.log(height)
 
   const onChange = React.useCallback((val:any, _viewUpdate:any) => {
@@ -31,6 +32,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
       const line = viewUpdate.state.doc.lineAt(cursorPos).number;
       const line_bottom = viewUpdate.state.doc.lineAt(cursorPos_bottom).number;
       console.log(line, ",", line_bottom)
+      setSelectedRow({from: line, to: line_bottom})
     }
   },[]);
 

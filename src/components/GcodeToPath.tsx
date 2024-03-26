@@ -38,7 +38,7 @@ function GcodeToPath(){
         //コメントの削除
         const comment_pos = origin_line.indexOf(';');
         const line = (comment_pos !== -1) ? origin_line.slice(0, comment_pos) : origin_line;
-        if(line.length == 0){
+        if(line.length === 0){
           continue
         }
         
@@ -167,9 +167,9 @@ function GcodeToPath(){
       }
     }
 
-    console.log("new lines: ", new_lines)
+    //console.log("new lines: ", new_lines)
     setViewerObjects(new_lines)
-    console.log("All time: " + all_time)
+    //console.log("All time: " + all_time)
     setPrintResult({print_time: all_time, filament_length: filament_length, filament_weight: 0})
     console.log("end gcode to path")
 

@@ -94,7 +94,7 @@ function MainGcodeEV() {
     const reader = new FileReader();
     // ファイル読み込み完了時に発火するリスナー
     reader.addEventListener("load", () => {
-      setGcodeData(typeof reader.result === "string" ? reader.result : "");
+      setGcodeData(typeof reader.result === "string" ? reader.result.replaceAll("\r\r", "\r") : "");
       event.target.value = "";
     });
     reader.readAsText(file);

@@ -6,7 +6,7 @@ import vertexShader from './shaders/vert_shader.glsl?raw'
 import fragmentShader from './shaders/frag_shader.glsl?raw'
 import { Box3Helper } from 'three';
 import { useRecoilState } from 'recoil';
-import { viewControlState } from '../../atoms/GcodeState';
+import { viewControlState, selectedRowState } from '../../atoms/GcodeState';
 
 const MyCustomMaterial = shaderMaterial(
   {
@@ -76,6 +76,7 @@ type LineSegmentsPropsTypes = {
 export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
   const meshRef = useRef<any>(null);
   const [viewControl, _setViewControl] = useRecoilState(viewControlState)
+  const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
 
   //const { size, gl, camera, raycaster, pointer} = useThree(); // Three.jsのレンダラーからサイズを取得
   const { size} = useThree(); // Three.jsのレンダラーからサイズを取得
@@ -146,9 +147,9 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
 
 
   const geometry = useMemo(() => {
-    console.log("create geometry")
-    console.log(lineSegments)
-    console.log(size)
+    //console.log("create geometry")
+    //console.log(lineSegments)
+    //console.log(size)
     if(lineSegments.length <= 0) {
       return
     }
@@ -197,7 +198,12 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
       buffer_array[i * 10 + 4] = lineSegments[i+show_start].points[1].y;
       buffer_array[i * 10 + 5] = lineSegments[i+show_start].points[1].z;
 
-      const color = new THREE.Color(lineSegments[i+show_start].color);
+      const line_index = lineSegments[i+show_start].index
+      let line_color = lineSegments[i+show_start].color
+      if( (selectedRow.from -1) <= line_index && line_index <= (selectedRow.to-1)){
+        line_color = "#ffff00"
+      }
+      const color = new THREE.Color(line_color);
       buffer_array[i * 10 + 6] = color.r;
       buffer_array[i * 10 + 7] = color.g;
       buffer_array[i * 10 + 8] = color.b;
@@ -205,7 +211,7 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
       buffer_array[i * 10 + 9] = lineSegments[i+show_start].width;
     }
 
-    console.log(buffer_array);
+    //console.log(buffer_array);
 
     const interleavedBuffer = new THREE.InstancedInterleavedBuffer(buffer_array, 10);
 
@@ -221,7 +227,7 @@ export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
     tempGeometry.boundingSphere = get_bounding_sphere
 
     return tempGeometry;
-  }, [lineSegments, size, viewControl]);
+  }, [lineSegments, size, viewControl ,selectedRow]);
 
   const handleClick = (event:any) => {
     console.log("handleClick")
