@@ -4,7 +4,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { useRecoilState } from 'recoil';
 import { gcodeState } from '../atoms/GcodeState';
 
-function GcodeEditor({height, width}:any) {
+function GcodeEditor({hidden, height, width}:any) {
   const editorRef = useRef<any>(null)
 
   //const [value, setValue] = useState(gcode_data);
@@ -52,9 +52,11 @@ function GcodeEditor({height, width}:any) {
 
 
   return (
-    <>
-      <CodeMirror ref={editorRef} height={`${height}px`} width={`${width}px`} value={value} onChange={onChange} onUpdate={onUpdate}/>
-    </>
+    <div>
+    {
+      <CodeMirror ref={editorRef} hidden={hidden} height={`${height}px`} width={`${width}px`} value={value} onChange={onChange} onUpdate={onUpdate}/>
+    }
+    </div>
   )
 }
 export default GcodeEditor;

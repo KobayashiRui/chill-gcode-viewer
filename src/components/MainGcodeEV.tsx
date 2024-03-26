@@ -30,10 +30,12 @@ function secToDayTime(seconds:number) {
 function MainGcodeEV() {
   const editorRef = useRef<any>(null);
   const viewerRef = useRef<any>(null);
-  const [viewHeight, setViewHeight] = useState(0);
   const [editorHeight, setEditorHeight] = useState(0);
-  const [viewerWidth, setViewerWidth] = useState(0);
   const [editorWidth, setEditorWidth] = useState(0);
+  const [viewerHeight, setViewerHeight] = useState(0);
+  const [viewerWidth, setViewerWidth] = useState(0);
+
+  const [contentsHidden, setContentsHidden] = useState(false);
 
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const [viewControl, setViewControl] = useRecoilState(viewControlState)
@@ -46,14 +48,23 @@ function MainGcodeEV() {
 
   useEffect(() => {
     function handleResize() {
-     if(editorRef.current && viewerRef.current) {
-        console.log("resize window:", editorRef.current.clientHeight, ",", editorRef.current.clientWidth)
-        setEditorHeight(editorRef.current.clientHeight-10); // 親要素の現在の高さをセット
-        setViewHeight(viewerRef.current.clientHeight-20); // 親要素の現在の高さをセット
-        setEditorWidth(window.innerWidth * 2.0/6.0 - 10)
-        setViewerWidth(window.innerWidth * 4.0/6.0 - 10)
-        console.log(window.innerWidth * 4.0/6.0)
-      }
+        console.log("hidden")
+        setContentsHidden(true)
+        setTimeout(() => {
+          setEditorHeight(editorRef.current.clientHeight-5);
+          setEditorWidth(editorRef.current.clientWidth-10);
+          setViewerHeight(viewerRef.current.clientHeight-5);
+          setViewerWidth(viewerRef.current.clientWidth-5);
+          setContentsHidden(false)
+        },100)
+  //   if(editorRef.current && viewerRef.current) {
+  //      console.log("resize window:", editorRef.current.clientHeight, ",", editorRef.current.clientWidth)
+  //      setEditorHeight(editorRef.current.clientHeight-10); // 親要素の現在の高さをセット
+  //      setViewHeight(viewerRef.current.clientHeight-20); // 親要素の現在の高さをセット
+  //      setEditorWidth(window.innerWidth * 2.0/6.0 - 10)
+  //      setViewerWidth(window.innerWidth * 4.0/6.0 - 10)
+  //      console.log(window.innerWidth * 4.0/6.0)
+  //    }
     }
 
     window.addEventListener('resize', handleResize);
@@ -61,6 +72,17 @@ function MainGcodeEV() {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []); // 空の依存配列でマウントとアンマウント時のみ実行
+
+  //useEffect(()=>{
+  //    if(contentsHidden){
+  //      console.log("Show")
+  //      setEditorHeight(editorRef.current.clientHeight);
+  //      setEditorWidth(editorRef.current.clientWidth);
+  //      setViewerHeight(viewerRef.current.clientHeight);
+  //      setViewerWidth(viewerRef.current.clientWidth);
+  //      setContentsHidden(false)
+  //    }
+  //},[contentsHidden])  
 
 
   const handleChnageFile = (event:React.ChangeEvent<HTMLInputElement>) => {
@@ -148,8 +170,14 @@ function MainGcodeEV() {
                 </div>
               </div>
             </div>
-            <div ref={editorRef} className="grow w-full border p-0.5">
-              <GcodeEditor height={editorHeight} width={editorWidth}></GcodeEditor>
+            <div className="grow w-full border p-0.5">
+              <div ref={editorRef} className="h-full w-full">
+              {
+              //<div className="h-full w-full">Test</div>
+              <GcodeEditor hidden={contentsHidden} height={editorHeight} width={editorWidth}></GcodeEditor>
+              }
+
+              </div>
             </div>
             <div className="border p-1  pb-10">
               <h2 className="text-md text-gray-200 underline underline-offset-2">View control</h2>
@@ -180,9 +208,12 @@ function MainGcodeEV() {
             </div>
           </div>
           <div ref={viewerRef} className="flex-1 border p-0.5">
+            <div ref={viewerRef} className="h-full w-full">
             {
-              <GcodeViewer height={viewHeight} width={viewerWidth} ></GcodeViewer>
+              //<div className="h-full w-full">Test</div>
+              <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth} ></GcodeViewer>
             }
+            </div>
           </div>
 
         </div>
