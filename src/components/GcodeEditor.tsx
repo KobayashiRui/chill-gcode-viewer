@@ -1,10 +1,10 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, forwardRef, useImperativeHandle} from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 //import { javascript } from '@codemirror/lang-javascript';
 import { useRecoilState } from 'recoil';
 import { gcodeState } from '../atoms/GcodeState';
 
-function GcodeEditor({hidden, height, width}:any) {
+const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
   const editorRef = useRef<any>(null)
 
   //const [value, setValue] = useState(gcode_data);
@@ -34,8 +34,16 @@ function GcodeEditor({hidden, height, width}:any) {
     }
   },[]);
 
+  useImperativeHandle(ref, () => {
+    return {
+      goLine(lineNumber:number) {
+        console.log("Go Line:", lineNumber)
+        handleGoLine(lineNumber)
+      }
+    }
+  },[])
+
   //指定の行に移動する
-  /*
   const handleGoLine = (lineNumber:number) => {
     if(editorRef.current){
       console.log(editorRef.current)
@@ -44,11 +52,11 @@ function GcodeEditor({hidden, height, width}:any) {
       console.log(pos)
       view.dispatch({
         selection: { anchor: pos, head: pos },
+        scrollIntoView: true
       })
       view.focus()
     }
   }
-  */
 
 
   return (
@@ -58,5 +66,5 @@ function GcodeEditor({hidden, height, width}:any) {
     }
     </div>
   )
-}
+})
 export default GcodeEditor;

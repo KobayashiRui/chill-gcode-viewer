@@ -28,8 +28,9 @@ function secToDayTime(seconds:number) {
 }
 
 function MainGcodeEV() {
-  const editorRef = useRef<any>(null);
-  const viewerRef = useRef<any>(null);
+  const editorContainerRef = useRef<any>(null);
+  const viewerContainerRef = useRef<any>(null);
+  const gcodeEditorRef = useRef<any>(null);
   const [editorHeight, setEditorHeight] = useState(0);
   const [editorWidth, setEditorWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
@@ -51,16 +52,16 @@ function MainGcodeEV() {
         console.log("hidden")
         setContentsHidden(true)
         setTimeout(() => {
-          setEditorHeight(editorRef.current.clientHeight-5);
-          setEditorWidth(editorRef.current.clientWidth-10);
-          setViewerHeight(viewerRef.current.clientHeight-5);
-          setViewerWidth(viewerRef.current.clientWidth-5);
+          setEditorHeight(editorContainerRef.current.clientHeight-5);
+          setEditorWidth(editorContainerRef.current.clientWidth-10);
+          setViewerHeight(viewerContainerRef.current.clientHeight-5);
+          setViewerWidth(viewerContainerRef.current.clientWidth-5);
           setContentsHidden(false)
         },100)
-  //   if(editorRef.current && viewerRef.current) {
-  //      console.log("resize window:", editorRef.current.clientHeight, ",", editorRef.current.clientWidth)
-  //      setEditorHeight(editorRef.current.clientHeight-10); // 親要素の現在の高さをセット
-  //      setViewHeight(viewerRef.current.clientHeight-20); // 親要素の現在の高さをセット
+  //   if(editorContainerRef.current && viewerContainerRef.current) {
+  //      console.log("resize window:", editorContainerRef.current.clientHeight, ",", editorContainerRef.current.clientWidth)
+  //      setEditorHeight(editorContainerRef.current.clientHeight-10); // 親要素の現在の高さをセット
+  //      setViewHeight(viewerContainerRef.current.clientHeight-20); // 親要素の現在の高さをセット
   //      setEditorWidth(window.innerWidth * 2.0/6.0 - 10)
   //      setViewerWidth(window.innerWidth * 4.0/6.0 - 10)
   //      console.log(window.innerWidth * 4.0/6.0)
@@ -76,10 +77,10 @@ function MainGcodeEV() {
   //useEffect(()=>{
   //    if(contentsHidden){
   //      console.log("Show")
-  //      setEditorHeight(editorRef.current.clientHeight);
-  //      setEditorWidth(editorRef.current.clientWidth);
-  //      setViewerHeight(viewerRef.current.clientHeight);
-  //      setViewerWidth(viewerRef.current.clientWidth);
+  //      setEditorHeight(editorContainerRef.current.clientHeight);
+  //      setEditorWidth(editorContainerRef.current.clientWidth);
+  //      setViewerHeight(viewerContainerRef.current.clientHeight);
+  //      setViewerWidth(viewerContainerRef.current.clientWidth);
   //      setContentsHidden(false)
   //    }
   //},[contentsHidden])  
@@ -171,10 +172,10 @@ function MainGcodeEV() {
               </div>
             </div>
             <div className="grow w-full border p-0.5">
-              <div ref={editorRef} className="h-full w-full">
+              <div ref={editorContainerRef} className="h-full w-full">
               {
               //<div className="h-full w-full">Test</div>
-              <GcodeEditor hidden={contentsHidden} height={editorHeight} width={editorWidth}></GcodeEditor>
+              <GcodeEditor ref={gcodeEditorRef} hidden={contentsHidden} height={editorHeight} width={editorWidth}></GcodeEditor>
               }
 
               </div>
@@ -200,17 +201,23 @@ function MainGcodeEV() {
                 <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} onChange={handleChangeViewStartLayer}></input>
                 <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
               </div>
-              <span>Start Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["start_layer"]]["index"]+1: 0}</span>
+              <div>
+                <span>Start Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["start_layer"]]["index"]+1: 0}</span>
+                <button className="btn btn-xs mx-2 btn-accent" onClick={()=> {gcodeEditorRef.current.goLine(viewerObjects[viewControl["start_layer"]]["index"]+1)}}>Go Row</button>
+              </div>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">end layer:</span>
                 <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} onChange={handleChangeViewEndLayer}></input>
                 <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
               </div>
-              <span>End Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["end_layer"]]["index"]+1: 0}</span>
+              <div>
+                <span>End Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["end_layer"]]["index"]+1: 0}</span>
+                <button className="btn btn-xs mx-2 btn-accent" onClick={()=> {gcodeEditorRef.current.goLine(viewerObjects[viewControl["end_layer"]]["index"]+1)}}>Go Row</button>
+              </div>
             </div>
           </div>
-          <div ref={viewerRef} className="flex-1 border p-0.5">
-            <div ref={viewerRef} className="h-full w-full">
+          <div ref={viewerContainerRef} className="flex-1 border p-0.5">
+            <div ref={viewerContainerRef} className="h-full w-full">
             {
               //<div className="h-full w-full">Test</div>
               <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
