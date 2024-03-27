@@ -76,7 +76,7 @@ type LineSegmentsPropsTypes = {
 export default function LineSegments({lineSegments}:LineSegmentsPropsTypes) {
   const meshRef = useRef<any>(null);
   const [viewControl, _setViewControl] = useRecoilState(viewControlState)
-  const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
+  const [selectedRow, _setSelectedRow] = useRecoilState(selectedRowState)
 
   //const { size, gl, camera, raycaster, pointer} = useThree(); // Three.jsのレンダラーからサイズを取得
   const { size} = useThree(); // Three.jsのレンダラーからサイズを取得

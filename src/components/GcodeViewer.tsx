@@ -1,4 +1,3 @@
-import {useEffect, useRef, useState} from 'react'
 import { Vector3 , DoubleSide} from 'three'
 import { Canvas} from '@react-three/fiber'
 import { Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
@@ -11,11 +10,6 @@ import LineSegments from './LineSegmentsObject/LineSegments'
 function GcodeViewer({hidden, height, width}:any) {
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const canvas_size:any = [1000, 1000]
-  console.log(height)
-  const canvasContainerRef = useRef<any>(null)
-  const [canvasHeight, setCanvasHeight] = useState(100.0)
-  const [canvasWidth, setCanvasWidth] = useState(100.0)
-  const [canvasHidden, setCanvasHidden] = useState(false)
 
   //useEffect(() => {
   //  function handleResize() {
@@ -67,7 +61,7 @@ function GcodeViewer({hidden, height, width}:any) {
         //</group>
         }
         <OrbitControls makeDefault></OrbitControls>
-        <axesHelper args={[5]} />
+        <axesHelper args={[50]} />
         <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
           <GizmoViewport {...{ axisColors: ["#f73b3b", "#3bf751", "#3b87f7"]}} />
         </GizmoHelper>

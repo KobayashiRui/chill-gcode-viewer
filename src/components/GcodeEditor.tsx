@@ -9,7 +9,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
 
   //const [value, setValue] = useState(gcode_data);
   const [value, setValue] = useRecoilState(gcodeState)
-  const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
+  const [_selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
   console.log(height)
 
   const onChange = React.useCallback((val:any, _viewUpdate:any) => {
