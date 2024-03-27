@@ -1,7 +1,16 @@
-# Tauri + React + Typescript
+# Chill gcode viewer
+オリジナルのGcode Viewer.
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## Features
+- [x] Gコードファイルの読み込み
+- [x] Gコードエディタ機能
+- [x] Gコードパスの表示
+- [x] 指定範囲の表示
+- [ ] 選択行のパスをハイライト
+- [ ] 移動パスと造形パスの表示/非表示の対応
+- [ ] 移動パスと造形パスの太さの設定変更
+- [ ] Gコードファイルのエクスポート
+- [ ] プリンターの設定(造形範囲、デフォルト加速度、速度)登録機能
+- [ ] プリンターの設定import, export機能
+- [ ] Gコードパスのタイプ対応(タイプと色の組み合わせを登録可能にする)
+- [ ] パスタイプごとの表示、非表示の対応
