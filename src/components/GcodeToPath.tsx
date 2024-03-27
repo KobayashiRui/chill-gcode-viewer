@@ -1,6 +1,6 @@
 import {Vector3} from 'three';
 import { useRecoilValue, useRecoilState} from "recoil"
-import { gcodeState, viewerObjectsState, printResultState} from '../atoms/GcodeState';
+import { gcodeState, viewerObjectsState, printResultState, viewControlState} from '../atoms/GcodeState';
 
 //function getPositions(pos_list: Vector3[]){
 //  let new_positions:number[] = []
@@ -15,9 +15,13 @@ function GcodeToPath(){
   const gcodeData = useRecoilValue(gcodeState)
   const [_viewerObjects, setViewerObjects] = useRecoilState(viewerObjectsState)
   const [_printResult, setPrintResult] = useRecoilState(printResultState)
+  const [_viewControl, setViewControl] = useRecoilState(viewControlState)
 
   const handleLoadGcodeToPath = () => {
     console.log("start gcode to path")
+
+    //reset viewer control
+    setViewControl({mode:0, start_layer:0, end_layer:0})
 
     let new_lines:any = []
 
@@ -166,12 +170,12 @@ function GcodeToPath(){
         }
       }
     }
-
     //console.log("new lines: ", new_lines)
     setViewerObjects(new_lines)
     //console.log("All time: " + all_time)
     setPrintResult({print_time: all_time, filament_length: filament_length, filament_weight: 0})
     console.log("end gcode to path")
+
 
   }
 
