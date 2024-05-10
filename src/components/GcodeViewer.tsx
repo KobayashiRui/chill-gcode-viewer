@@ -6,6 +6,7 @@ import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
 import LineSegments from './LineSegmentsObject/LineSegments'
+import {Line3} from './LineSegmentsObject/Line3'
 
 function GcodeViewer({hidden, height, width}:any) {
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
@@ -46,9 +47,14 @@ function GcodeViewer({hidden, height, width}:any) {
       >
         <Grid cellColor="white" cellSize={1} sectionSize={10} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
         <ambientLight />
-        <LineSegments
+        {
+        //<LineSegments
+        //  lineSegments={viewerObjects}
+        //></LineSegments>
+        <Line3
           lineSegments={viewerObjects}
-        ></LineSegments>
+        ></Line3>
+        }
         {
         //<group >
         //  {
