@@ -43,7 +43,7 @@ export const Line3 = React.forwardRef<
   const lineGeom = React.useMemo(() => {
     const geom =  new LineSegments3Geometry()
 
-    geom.setPositions(lineSegments, 0, 100)
+    geom.setPositions(lineSegments, 0, lineSegments.length)
 
     //if (vertexColors) {
     //  // using vertexColors requires the color value to be white see #1813
@@ -53,7 +53,7 @@ export const Line3 = React.forwardRef<
     //}
 
     return geom
-  }, [LineSegments3])
+  }, [lineSegments])
 
   React.useLayoutEffect(() => {
     line3.computeLineDistances()
@@ -78,6 +78,8 @@ export const Line3 = React.forwardRef<
   const handleClick = (event:any) => {
     console.log("handleClick")
     console.log(event)
+    console.log("click:", event.faceIndex)
+    console.log(lineSegments[event.faceIndex])
   }
 
   return (
