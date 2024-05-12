@@ -167,6 +167,9 @@ function GcodeToPath(){
             e_absolute = false
             break;
           }
+          default: {
+            break;
+          }
         }
       }
     }

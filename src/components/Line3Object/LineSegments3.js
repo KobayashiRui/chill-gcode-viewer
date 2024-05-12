@@ -245,7 +245,7 @@ class LineSegments3 extends Mesh {
     const geometry = this.geometry
     const material = this.material
 
-    _lineWidth = material.linewidth + threshold
+    _lineWidth = material.linewidth + threshold + 10
 
     _instanceStart = geometry.attributes.pointA
     _instanceEnd = geometry.attributes.pointB

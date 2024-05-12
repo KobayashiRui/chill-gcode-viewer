@@ -9,7 +9,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
 
   //const [value, setValue] = useState(gcode_data);
   const [value, setValue] = useRecoilState(gcodeState)
-  const [_selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
+  const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
   console.log(height)
 
   const onChange = React.useCallback((val:any, _viewUpdate:any) => {
@@ -36,6 +36,21 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
     }
   },[]);
 
+  useEffect(()=>{
+    if(editorRef.current){
+      const view = editorRef.current.view
+      const cursor_pos = view.state.selection.main.from;
+      const cursor_pos_bottom = view.state.selection.main.to;
+      const line = view.state.doc.lineAt(cursor_pos).number;
+      const line_bottom = view.state.doc.lineAt(cursor_pos_bottom).number;
+      console.log(`now line: ${line}~${line_bottom}`)
+      if(selectedRow.from !== line || selectedRow.to !== line_bottom){
+        console.log("MOVE")
+        handleGoLine(selectedRow.from)
+      }
+    }
+  }, [selectedRow])
+
   useImperativeHandle(ref, () => {
     return {
       goLine(lineNumber:number) {
@@ -59,6 +74,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
       view.focus()
     }
   }
+
 
 
   return (

@@ -54,19 +54,12 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
     return this
   }
 
-  setPositions(line_segments, start=0, end=null) {
+  setPositions(line_segments, start=0, end=null, selected_row) {
 
     const buffer_array = new Float32Array(line_segments.length * 10);
 
     let show_start = start
-    let show_end = end === null ? end : line_segments.length
-    //if(viewControl.mode === 1){
-    //  show_start = viewControl.start_layer
-    //  show_end = 1
-    //}else if(viewControl.mode === 2) {
-    //  show_start = viewControl.start_layer
-    //  show_end = viewControl.end_layer - viewControl.start_layer + 1
-    //}
+    let show_end = end === null ? line_segments.length : end
 
     for (let i = 0; i < show_end; i++) {
       // pointAの座標を設定
@@ -80,15 +73,19 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
 
       const line_index = line_segments[i+show_start].index
       let line_color = line_segments[i+show_start].color
-      //if( (selectedRow.from -1) <= line_index && line_index <= (selectedRow.to-1)){
-      //  line_color = "#ffff00"
-      //}
+      let line_width = line_segments[i+show_start].width
+      
+      if(selected_row && (selected_row.from -1) <= line_index && line_index <= (selected_row.to-1)){
+        console.log("selected=>",line_segments[i+show_start])
+        line_color = "#ffff00"
+        line_width = 8
+      }
       const color = new Color(line_color);
       buffer_array[i * 10 + 6] = color.r;
       buffer_array[i * 10 + 7] = color.g;
       buffer_array[i * 10 + 8] = color.b;
 
-      buffer_array[i * 10 + 9] = line_segments[i+show_start].width;
+      buffer_array[i * 10 + 9] = line_width;
     }
 
     const instanceBuffer = new InstancedInterleavedBuffer(buffer_array, 10);

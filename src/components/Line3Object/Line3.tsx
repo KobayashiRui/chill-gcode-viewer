@@ -3,6 +3,8 @@ import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import { useThree, extend } from '@react-three/fiber'
+import { useRecoilState } from 'recoil';
+
 import { LineSegments3 } from './LineSegments3'
 import { LineSegments3Geometry } from './LineSegments3Geometry'
 import vertexShader from './shaders/vert_shader.glsl?raw'
@@ -29,6 +31,9 @@ export const Line3 = React.forwardRef<
   LineSegments3,
   LineSegmentsPropsTypes
 >(function Line3({lineSegments}, ref) {
+  const [viewControl, _setViewControl] = useRecoilState(viewControlState)
+  const [selectedRow, _setSelectedRow] = useRecoilState(selectedRowState)
+
   const size = useThree((state) => state.size)
   const line3 = useMemo(() => (new LineSegments3()), [lineSegments])
   //const [lineMaterial] = React.useState(() => new MyCustomMaterial())
@@ -43,21 +48,28 @@ export const Line3 = React.forwardRef<
   const lineGeom = React.useMemo(() => {
     const geom =  new LineSegments3Geometry()
 
-    geom.setPositions(lineSegments, 0, lineSegments.length)
-
-    //if (vertexColors) {
-    //  // using vertexColors requires the color value to be white see #1813
-    //  color = 0xffffff
-    //  const cValues = vertexColors.map((c) => (c instanceof Color ? c.toArray() : c))
-    //  geom.setColors(cValues.flat(), itemSize)
-    //}
+    geom.setPositions(lineSegments, 0, lineSegments.length, selectedRow)
 
     return geom
   }, [lineSegments])
 
+
   React.useLayoutEffect(() => {
     line3.computeLineDistances()
   }, [lineSegments])
+
+  React.useLayoutEffect(() => {
+    let show_start = 0
+    let show_end = lineSegments.length
+    if(viewControl.mode === 1){
+      show_start = viewControl.start_layer
+      show_end = 1
+    }else if(viewControl.mode === 2) {
+      show_start = viewControl.start_layer
+      show_end = viewControl.end_layer - viewControl.start_layer + 1
+    }
+    lineGeom.setPositions(lineSegments, show_start, show_end, selectedRow)
+  }, [viewControl, selectedRow])
 
   //React.useLayoutEffect(() => {
   //  if (dashed) {
@@ -70,16 +82,27 @@ export const Line3 = React.forwardRef<
   //}, [dashed, lineMaterial])
 
   React.useEffect(() => {
-    console.log(lineGeom)
     return () => lineGeom.dispose()
   }, [lineGeom])
+
+  const getSelectedIndex = (click_index: number) => {
+    if(viewControl.mode === 0){
+      return lineSegments[click_index].index + 1
+    }else if(viewControl.mode === 1){
+      return lineSegments[click_index + viewControl.start_layer].index + 1
+    }else if(viewControl.mode == 2){
+      return lineSegments[click_index + viewControl.start_layer].index + 1
+    }
+  }
 
 
   const handleClick = (event:any) => {
     console.log("handleClick")
     console.log(event)
-    console.log("click:", event.faceIndex)
+    console.log("click:", getSelectedIndex(event.faceIndex))
     console.log(lineSegments[event.faceIndex])
+    const selected_index = getSelectedIndex(event.faceIndex)
+    _setSelectedRow({from:selected_index, to:selected_index})
   }
 
   return (

@@ -5,8 +5,8 @@ import { Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/dre
 import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
-import LineSegments from './LineSegmentsObject/LineSegments'
-import {Line3} from './LineSegmentsObject/Line3'
+//import LineSegments from './LineSegmentsObject/LineSegments'
+import {Line3} from './Line3Object/Line3'
 
 function GcodeViewer({hidden, height, width}:any) {
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
