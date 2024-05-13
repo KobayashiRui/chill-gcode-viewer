@@ -5,7 +5,6 @@ import { Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/dre
 import { useRecoilState} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
 
-//import LineSegments from './LineSegmentsObject/LineSegments'
 import {Line3} from './Line3Object/Line3'
 
 function GcodeViewer({hidden, height, width}:any) {
@@ -47,25 +46,9 @@ function GcodeViewer({hidden, height, width}:any) {
       >
         <Grid cellColor="white" cellSize={1} sectionSize={10} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
         <ambientLight />
-        {
-        //<LineSegments
-        //  lineSegments={viewerObjects}
-        //></LineSegments>
         <Line3
           lineSegments={viewerObjects}
         ></Line3>
-        }
-        {
-        //<group >
-        //  {
-        //    viewerObjects.map( (vo:any, vi:number)=> {
-        //      return (
-        //        <LineSegmentObject key={vi} data={vo} />
-        //      )
-        //    })
-        //  }
-        //</group>
-        }
         <OrbitControls makeDefault></OrbitControls>
         <axesHelper args={[50]} />
         <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
