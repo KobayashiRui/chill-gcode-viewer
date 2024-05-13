@@ -18,10 +18,10 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
     setValue(val);
   }, []);
 
-  useEffect(() => {
-    const editor = editorRef.current?.editor;
-    console.log(editor.current)
-  }, [editorRef.current]);
+  //useEffect(() => {
+  //  const editor = editorRef.current?.editor;
+  //  console.log(editor.current)
+  //}, [editorRef.current]);
 
   const onUpdate = React.useCallback((viewUpdate:any) => {
     if (viewUpdate.docChanged || viewUpdate.selectionSet) {
@@ -37,7 +37,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
   },[]);
 
   useEffect(()=>{
-    if(editorRef.current){
+    if(editorRef.current && editorRef.current.view){
       const view = editorRef.current.view
       const cursor_pos = view.state.selection.main.from;
       const cursor_pos_bottom = view.state.selection.main.to;
@@ -49,7 +49,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
         handleGoLine(selectedRow.from)
       }
     }
-  }, [selectedRow])
+  }, [selectedRow, editorRef])
 
   useImperativeHandle(ref, () => {
     return {
