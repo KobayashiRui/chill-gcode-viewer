@@ -3,9 +3,11 @@ import {useEffect, useState, useRef, useMemo } from "react";
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { gcodeState, printResultState, viewerObjectsState, viewControlState } from '../atoms/GcodeState';
 
+import Header from "./Header";
 import GcodeEditor from "./GcodeEditor";
 import GcodeViewer from "./GcodeViewer";
 import FileInput from "./FileInput";
+import FileOutput from "./FileOutput";
 import GcodeToPath from "./GcodeToPath"
 
 function secToDayTime(seconds:number) {
@@ -144,7 +146,7 @@ function MainGcodeEV() {
   return (
     <div className="flex flex-col h-full">
       <div className="grow-0">
-        <h1 className="text-sky-500 text-2xl m-3">Chill Gcode Viewer</h1>
+        <Header></Header>
       </div>
       <div className="grow">
         <div className="flex h-full">
@@ -152,6 +154,7 @@ function MainGcodeEV() {
             <div className="flex items-center border p-0.5">
               <FileInput handleChnageFile={handleChnageFile}></FileInput>
               <GcodeToPath></GcodeToPath>
+              <FileOutput></FileOutput>
             </div>
             <div className="flex items-center border p-0.5">
               <div className="flex text-black mx-3 my-1">
