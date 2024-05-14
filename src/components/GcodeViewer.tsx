@@ -42,7 +42,7 @@ function GcodeViewer({hidden, height, width}:any) {
         style={{height:`${height}px`, width:`${width}px`}}
         //style={{height:`100%`, width:`100%`}}
         //resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
-        camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, near:0.1, far: 10000}}
+        camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, near:0.001, far: 10000}}
       >
         <Grid cellColor="white" cellSize={1} sectionSize={10} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
         <ambientLight />
