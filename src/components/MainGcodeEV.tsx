@@ -29,6 +29,13 @@ function secToDayTime(seconds:number) {
   return time;
 }
 
+function FileInputButton(handler:any){
+  return (
+    <FileInput handleInputFile={handler}></FileInput>
+  )
+
+}
+
 function MainGcodeEV() {
   const editorContainerRef = useRef<any>(null);
   const viewerContainerRef = useRef<any>(null);
@@ -88,7 +95,7 @@ function MainGcodeEV() {
   //},[contentsHidden])  
 
 
-  const handleChnageFile = (event:React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputFile = (event:React.ChangeEvent<HTMLInputElement>) => {
     const files = event.currentTarget.files;
     if (!files || files?.length === 0) return;
     const file = files[0];
@@ -100,6 +107,25 @@ function MainGcodeEV() {
       event.target.value = "";
     });
     reader.readAsText(file);
+  }
+
+  const handleOutputFile = async (event:React.ChangeEvent<HTMLOutputElement>) => {
+
+    console.log("Gcode data")
+    console.log(_gcodeData)
+    const handle = await window.showSaveFilePicker({
+      types: [
+        {
+          accept: {
+            'text/plain': ['.gcode'],
+          },
+        },
+      ],
+    });
+
+    const writable = await handle.createWritable();
+    await writable.write(_gcodeData);
+    await writable.close();
 
   }
 
@@ -146,18 +172,21 @@ function MainGcodeEV() {
   return (
     <div className="flex flex-col h-full">
       <div className="grow-0">
-        <Header></Header>
+        <Header
+          item1={FileInputButton(handleInputFile)}
+        ></Header>
       </div>
       <div className="grow">
         <div className="flex h-full">
           <div className="flex flex-col w-2/6">
-            <div className="flex items-center border p-0.5">
-              <FileInput handleChnageFile={handleChnageFile}></FileInput>
+            <div className="flex flex-wrap items-center border p-0.5">
               <GcodeToPath></GcodeToPath>
-              <FileOutput></FileOutput>
+              <FileOutput
+                handleOutputFile={handleOutputFile}
+              ></FileOutput>
             </div>
-            <div className="flex items-center border p-0.5">
-              <div className="flex text-black mx-3 my-1">
+            <div className="flex flex-wrap items-center border p-0.5">
+              <div className="flex text-black text-nowrap mx-3 my-1">
                 <div className="bg-emerald-500 rounded-l-lg p-1">
                   造形時間
                 </div>
@@ -165,7 +194,7 @@ function MainGcodeEV() {
                   {memoPrintTime}
                 </div>
               </div>
-              <div className="flex text-black mx-3 my-1">
+              <div className="flex text-black text-nowrap mx-3 my-1">
                 <div className="bg-teal-500 rounded-l-lg p-1">
                   フィラメント長さ
                 </div>

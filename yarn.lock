@@ -843,6 +843,11 @@
   resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.14.tgz#9a03121a4912ea113b31e5c9c17f164d4fff8a1f"
   integrity sha512-UEMMm/Xn3DtEa+gpzUrOcDj+SJS1tk5YodjwOxcqStNhCfPcwgyC5Srg2ToVKyg2Fhq16Ffpb0UWUQHqoT9AMA==
 
+"@types/wicg-file-system-access@^2023.10.5":
+  version "2023.10.5"
+  resolved "https://registry.yarnpkg.com/@types/wicg-file-system-access/-/wicg-file-system-access-2023.10.5.tgz#14b3c25eb4d914b5734795bdea71da229f918b9d"
+  integrity sha512-e9kZO9kCdLqT2h9Tw38oGv9UNzBBWaR1MzuAavxPcsV/7FJ3tWbU6RI3uB+yKIDPGLkGVbplS52ub0AcRLvrhA==
+
 "@uiw/codemirror-extensions-basic-setup@4.21.24":
   version "4.21.24"
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-extensions-basic-setup/-/codemirror-extensions-basic-setup-4.21.24.tgz#b936c3daff0100e1a3d5b0500478747cfc80f7db"
