@@ -257,17 +257,6 @@ class LineSegments3 extends Mesh {
 
     _sphere.copy(geometry.boundingSphere).applyMatrix4(matrixWorld)
 
-    // increase the sphere bounds by the worst case line screen space width
-    let sphereMargin
-    if (worldUnits) {
-      sphereMargin = _lineWidth * 0.5
-    } else {
-      const distanceToSphere = Math.max(camera.near, _sphere.distanceToPoint(_ray.origin))
-      sphereMargin = getWorldSpaceHalfWidth(camera, distanceToSphere, material.resolution)
-    }
-
-    _sphere.radius += sphereMargin
-
     if (_ray.intersectsSphere(_sphere) === false) {
       return
     }
@@ -278,17 +267,6 @@ class LineSegments3 extends Mesh {
     }
 
     _box.copy(geometry.boundingBox).applyMatrix4(matrixWorld)
-
-    // increase the box bounds by the worst case line width
-    let boxMargin
-    if (worldUnits) {
-      boxMargin = _lineWidth * 0.5
-    } else {
-      const distanceToBox = Math.max(camera.near, _box.distanceToPoint(_ray.origin))
-      boxMargin = getWorldSpaceHalfWidth(camera, distanceToBox, material.resolution)
-    }
-
-    _box.expandByScalar(boxMargin)
 
     if (_ray.intersectsBox(_box) === false) {
       return
