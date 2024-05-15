@@ -112,7 +112,7 @@ function MainGcodeEV() {
     reader.readAsText(file);
   }
 
-  const handleOutputFile = async (event:React.ChangeEvent<HTMLOutputElement>) => {
+  const handleOutputFile = async (_event:React.ChangeEvent<HTMLOutputElement>) => {
     const filePath = await save({
       filters: [{
         name: "Gcode",
