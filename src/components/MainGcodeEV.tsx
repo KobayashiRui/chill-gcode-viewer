@@ -3,6 +3,9 @@ import {useEffect, useState, useRef, useMemo } from "react";
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { gcodeState, printResultState, viewerObjectsState, viewControlState } from '../atoms/GcodeState';
 
+import { save } from '@tauri-apps/api/dialog';
+import { fs } from "@tauri-apps/api";
+
 import Header from "./Header";
 import GcodeEditor from "./GcodeEditor";
 import GcodeViewer from "./GcodeViewer";
@@ -51,7 +54,7 @@ function MainGcodeEV() {
   const [viewControl, setViewControl] = useRecoilState(viewControlState)
 
   //const [gcodeData, setGcodeData] = useState<string>("")
-  const [_gcodeData, setGcodeData] = useRecoilState(gcodeState)
+  const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
   const printResult = useRecoilValue(printResultState)
 
   const memoPrintTime = useMemo(() => secToDayTime(printResult.print_time), [printResult])
@@ -110,23 +113,16 @@ function MainGcodeEV() {
   }
 
   const handleOutputFile = async (event:React.ChangeEvent<HTMLOutputElement>) => {
-
-    console.log("Gcode data")
-    console.log(_gcodeData)
-    const handle = await window.showSaveFilePicker({
-      types: [
-        {
-          accept: {
-            'text/plain': ['.gcode'],
-          },
-        },
-      ],
+    const filePath = await save({
+      filters: [{
+        name: "Gcode",
+        extensions: ['gcode']
+      }]
     });
-
-    const writable = await handle.createWritable();
-    await writable.write(_gcodeData);
-    await writable.close();
-
+    console.log("selected path:", filePath);
+    if(filePath !== null){
+      await fs.writeTextFile(filePath, gcodeData)
+    }
   }
 
   //TODO: end layer以上にならないようにする
