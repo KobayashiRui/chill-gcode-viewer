@@ -1,7 +1,8 @@
+//View Controlの実装
 import {useEffect, useState, useRef, useMemo } from "react";
 
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { gcodeState, printResultState, viewerObjectsState, viewControlState } from '../atoms/GcodeState';
+import { gcodeState, printResultState, viewerObjectsState, viewControlState, enableLineSelectState } from '../atoms/GcodeState';
 
 import { save } from '@tauri-apps/api/dialog';
 import { fs } from "@tauri-apps/api";
@@ -52,6 +53,7 @@ function MainGcodeEV() {
 
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const [viewControl, setViewControl] = useRecoilState(viewControlState)
+  const [enableLineSelect, setEnableLineSelect] = useRecoilState(enableLineSelectState)
 
   //const [gcodeData, setGcodeData] = useState<string>("")
   const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
@@ -211,6 +213,10 @@ function MainGcodeEV() {
             <div className="border p-1  pb-10">
               <h2 className="text-md text-gray-200 underline underline-offset-2">View control</h2>
               <div className="flex flex-col">
+                <label className="label p-0.5 cursor-pointer">
+                  <span className="label-text">Line select</span> 
+                  <input type="checkbox" className="toggle toggle-info" checked={enableLineSelect} onChange={(e)=>{setEnableLineSelect(e.target.checked)}}/>
+                </label>
                 <label className="label p-0.5 cursor-pointer">
                   <span className="label-text">All mode</span> 
                   <input type="radio" name="radio-view-mode" className="radio radio-sm checked:bg-red-500" value={0}  checked={viewControl["mode"] === 0} onChange={handleChangeViewMode}/>

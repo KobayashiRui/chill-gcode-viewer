@@ -107,7 +107,7 @@ function GcodeToPath(){
             now_e += new_e
 
             const line_color = new_e > 0.0 ? "#3cb371" : "#ff69b4"
-            const line_width = new_e > 0.0 ? 5.0 : 1.0
+            const line_width = new_e > 0.0 ? 2.0 : 0.5
             new_lines.push({"index": i, "type": 0, "points": [now_pos.clone(), target_pos.clone()], "color": line_color, "width": line_width })
             now_pos.copy(target_pos);
           break;

@@ -19,6 +19,12 @@ export const printResultState = atom<any>({
   }
 })
 
+export const enableLineSelectState = atom<boolean>({
+  key: 'enableLineSelectState',
+  default: false
+
+})
+
 export const viewControlState = atom<any>({
   key: 'viewControlState',
   default: {

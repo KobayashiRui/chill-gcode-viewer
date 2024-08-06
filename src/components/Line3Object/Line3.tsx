@@ -3,14 +3,14 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import { useThree, extend } from '@react-three/fiber'
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { LineSegments3 } from './LineSegments3'
 import { LineSegments3Geometry } from './LineSegments3Geometry'
 import vertexShader from './shaders/vert_shader.glsl?raw'
 import fragmentShader from './shaders/frag_shader.glsl?raw'
 
-import { viewControlState, selectedRowState } from '../../atoms/GcodeState';
+import { viewControlState, selectedRowState, enableLineSelectState} from '../../atoms/GcodeState';
 
 const MyCustomMaterial = shaderMaterial(
   {
@@ -33,6 +33,7 @@ export const Line3 = React.forwardRef<
 >(function Line3({lineSegments}, ref) {
   const [viewControl, _setViewControl] = useRecoilState(viewControlState)
   const [selectedRow, _setSelectedRow] = useRecoilState(selectedRowState)
+  const enableLineSelect = useRecoilValue(enableLineSelectState)
 
   const size = useThree((state) => state.size)
   const line3 = useMemo(() => (new LineSegments3()), [lineSegments])
@@ -97,16 +98,16 @@ export const Line3 = React.forwardRef<
 
 
   const handleClick = (event:any) => {
-    console.log("handleClick")
-    console.log(event)
-    console.log("click:", getSelectedIndex(event.faceIndex))
-    console.log(lineSegments[event.faceIndex])
+    //console.log("handleClick")
+    //console.log(event)
+    //console.log("click:", getSelectedIndex(event.faceIndex))
+    //console.log(lineSegments[event.faceIndex])
     const selected_index = getSelectedIndex(event.faceIndex)
     _setSelectedRow({from:selected_index, to:selected_index})
   }
 
   return (
-    <primitive object={line3} ref={ref} onClick={handleClick}>
+    <primitive object={line3} ref={ref} onClick={enableLineSelect?handleClick:null}>
       <primitive object={lineGeom} attach="geometry" />
       <primitive
         object={material}

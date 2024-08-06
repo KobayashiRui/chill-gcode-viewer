@@ -196,6 +196,7 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
 class LineSegments3 extends Mesh {
   constructor(geometry = new LineSegments3Geometry(), material) {
     super(geometry, material)
+    this.renderOrder = 6
 
     this.isLineSegments3 = true
 
