@@ -51,7 +51,7 @@ export const Line3 = React.forwardRef<
   const lineGeom = React.useMemo(() => {
     const geom =  new LineSegments3Geometry()
 
-    geom.setPositions(lineSegments, 0, lineSegments.length, selectedRow)
+    geom.setPositions(lineSegments, 0, lineSegments.length, selectedRow, null)
 
     return geom
   }, [lineSegments])
