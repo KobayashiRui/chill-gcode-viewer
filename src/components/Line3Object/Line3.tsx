@@ -11,6 +11,7 @@ import vertexShader from './shaders/vert_shader.glsl?raw'
 import fragmentShader from './shaders/frag_shader.glsl?raw'
 
 import { viewControlState, selectedRowState, enableLineSelectState} from '../../atoms/GcodeState';
+import { viewSettingState } from '../../atoms/ViewSetting';
 
 const MyCustomMaterial = shaderMaterial(
   {
@@ -34,6 +35,7 @@ export const Line3 = React.forwardRef<
   const [viewControl, _setViewControl] = useRecoilState(viewControlState)
   const [selectedRow, _setSelectedRow] = useRecoilState(selectedRowState)
   const enableLineSelect = useRecoilValue(enableLineSelectState)
+  const viewSetting = useRecoilValue(viewSettingState)
 
   const size = useThree((state) => state.size)
   const line3 = useMemo(() => (new LineSegments3()), [lineSegments])
@@ -69,8 +71,8 @@ export const Line3 = React.forwardRef<
       show_start = viewControl.start_layer
       show_end = viewControl.end_layer - viewControl.start_layer + 1
     }
-    lineGeom.setPositions(lineSegments, show_start, show_end, selectedRow)
-  }, [viewControl, selectedRow])
+    lineGeom.setPositions(lineSegments, show_start, show_end, selectedRow, viewSetting)
+  }, [viewControl, selectedRow, viewSetting])
 
   //React.useLayoutEffect(() => {
   //  if (dashed) {

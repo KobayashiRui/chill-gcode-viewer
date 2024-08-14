@@ -54,14 +54,29 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
     return this
   }
 
-  setPositions(line_segments, start=0, end=null, selected_row) {
+  setPositions(line_segments, start=0, end=null, selected_row, view_setting=null) {
 
     const buffer_array = new Float32Array(line_segments.length * 10);
 
     let show_start = start
     let show_end = end === null ? line_segments.length : end
+    console.log(line_segments)
+    console.log("view_setting:", view_setting)
+  
+    let type_show = [true, true]
+    if(view_setting !== null){
+      if(!view_setting.move_line){
+        type_show[0] = false
+      }
+      if(!view_setting.extrude_line){
+        type_show[1] = false
+      }
+    }
 
     for (let i = 0; i < show_end; i++) {
+      if(!type_show[line_segments[i+show_start].type]){
+        continue
+      }
       // pointAの座標を設定
       buffer_array[i * 10 + 0] = line_segments[i+show_start].points[0].x;
       buffer_array[i * 10 + 1] = line_segments[i+show_start].points[0].y;
@@ -76,7 +91,6 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
       let line_width = line_segments[i+show_start].width
       
       if(selected_row && (selected_row.from -1) <= line_index && line_index <= (selected_row.to-1)){
-        console.log("selected=>",line_segments[i+show_start])
         line_color = "#ffff00"
         line_width = 8
       }

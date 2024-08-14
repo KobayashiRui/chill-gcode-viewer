@@ -13,6 +13,8 @@ import GcodeViewer from "./GcodeViewer";
 import FileInput from "./FileInput";
 import FileOutput from "./FileOutput";
 import GcodeToPath from "./GcodeToPath"
+import ConfigModal from "./ConfigModal"
+import ViewSetting from "./ViewSetting";
 
 function secToDayTime(seconds:number) {
   const day = Math.floor(seconds / 86400);
@@ -252,6 +254,7 @@ function MainGcodeEV() {
           </div>
           <div ref={viewerContainerRef} className="flex-1 border p-0.5">
             <div ref={viewerContainerRef} className="h-full w-full">
+              <ViewSetting></ViewSetting>
             {
               //<div className="h-full w-full">Test</div>
               <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
@@ -261,6 +264,8 @@ function MainGcodeEV() {
 
         </div>
       </div>
+
+      <ConfigModal></ConfigModal>
     </div>
   )
 }
