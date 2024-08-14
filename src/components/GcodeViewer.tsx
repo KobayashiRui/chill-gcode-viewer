@@ -9,7 +9,7 @@ import {Line3} from './Line3Object/Line3'
 
 function GcodeViewer({hidden, height, width}:any) {
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
-  const canvas_size:any = [1000, 1000]
+  const canvas_size:any = [1000, 1000] //mm単位
 
   //useEffect(() => {
   //  function handleResize() {
@@ -45,7 +45,7 @@ function GcodeViewer({hidden, height, width}:any) {
         //resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
         camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, near:10, far: 10000}}
       >
-        <Grid cellColor="white" cellSize={1} sectionSize={10} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
+        <Grid cellColor="white" cellSize={10} sectionSize={100} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
         <ambientLight />
         <Line3
           lineSegments={viewerObjects}
