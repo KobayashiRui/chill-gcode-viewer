@@ -1,15 +1,38 @@
-import { Vector3 , DoubleSide} from 'three'
+import {useRef, useState, useEffect} from 'react'
+import { Vector3, Euler, DoubleSide} from 'three'
 import { Canvas} from '@react-three/fiber'
-import { Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
+import { OrthographicCamera, PerspectiveCamera, Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
 
-import { useRecoilState} from "recoil"
+import { useRecoilState, useRecoilValue} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
+import {viewCameraSettingState} from '../atoms/ViewSetting';
 
 import {Line3} from './Line3Object/Line3'
 
 function GcodeViewer({hidden, height, width}:any) {
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
+  const cameraSetting = useRecoilValue(viewCameraSettingState)
   const canvas_size:any = [1000, 1000] //mm単位
+
+  const cameraRef = useRef<any>(null);
+
+  const [cameraType, setCameraType] = useState(false)
+  const [cameraPosition, setCameraPosition] = useState(new Vector3(450, -560, 580))
+  const [cameraRotation, setCameraRotation] = useState(new Euler(1.0, 0.13, 0.08))
+
+  useEffect(()=>{
+    if(cameraRef.current !== null){
+      const {position, rotation} = cameraRef.current;
+      setCameraPosition(position.clone())
+      setCameraRotation(rotation.clone())
+      console.log("pos:",position)
+      console.log("rot:", rotation)
+      setCameraType(cameraSetting)
+    }
+  }, [cameraSetting])
+
+
+  
 
   //useEffect(() => {
   //  function handleResize() {
@@ -43,8 +66,14 @@ function GcodeViewer({hidden, height, width}:any) {
         style={{height:`${height}px`, width:`${width}px`}}
         //style={{height:`100%`, width:`100%`}}
         //resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
-        camera={{ position: new Vector3(-500, 500, 500),  up: new Vector3(0, 0, 1), fov: 75, near:10, far: 10000}}
       >
+        {
+          cameraType ? 
+            <OrthographicCamera ref={cameraRef} makeDefault up={[0,0,1]} position={cameraPosition} rotation={cameraRotation} zoom={1} near={10} far={10000} />
+            :
+            <PerspectiveCamera ref={cameraRef} makeDefault up={[0,0,1]} fov={75} position={cameraPosition} rotation={cameraRotation} near={10} far={10000} />
+        }
+
         <Grid cellColor="white" cellSize={10} sectionSize={100} args={canvas_size} side={DoubleSide} fadeDistance={10000} rotation={[Math.PI/2, 0, 0]} position={new Vector3(500,500,0)} />
         <ambientLight />
         <Line3
