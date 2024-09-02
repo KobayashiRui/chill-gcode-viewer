@@ -5,7 +5,7 @@ import { OrthographicCamera, PerspectiveCamera, Grid, OrbitControls, GizmoHelper
 
 import { useRecoilState, useRecoilValue} from "recoil"
 import { viewerObjectsState} from '../atoms/GcodeState';
-import {viewCameraSettingState} from '../atoms/ViewSetting';
+import {viewCameraSettingState} from '../atoms/ViewSettingState';
 
 import {Line3} from './Line3Object/Line3'
 

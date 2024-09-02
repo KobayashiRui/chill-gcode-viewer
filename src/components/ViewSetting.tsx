@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { viewSettingState, viewCameraSettingState} from '../atoms/ViewSetting';
+import { viewSettingState, viewCameraSettingState} from '../atoms/ViewSettingState';
 
 import Orthographic from '../assets/orthographic.svg'
 import Perspective from '../assets/perspective.svg'

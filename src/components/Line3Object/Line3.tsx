@@ -11,7 +11,7 @@ import vertexShader from './shaders/vert_shader.glsl?raw'
 import fragmentShader from './shaders/frag_shader.glsl?raw'
 
 import { viewControlState, selectedRowState, enableLineSelectState} from '../../atoms/GcodeState';
-import { viewSettingState } from '../../atoms/ViewSetting';
+import { viewSettingState } from '../../atoms/ViewSettingState';
 
 const MyCustomMaterial = shaderMaterial(
   {

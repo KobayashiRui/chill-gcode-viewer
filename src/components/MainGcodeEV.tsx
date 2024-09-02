@@ -3,6 +3,7 @@ import {useEffect, useState, useRef, useMemo } from "react";
 
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { gcodeState, printResultState, viewerObjectsState, viewControlState, enableLineSelectState } from '../atoms/GcodeState';
+import { filamentConfigState } from "../atoms/ConfigState"
 
 import { save } from '@tauri-apps/api/dialog';
 import { fs } from "@tauri-apps/api";
@@ -60,8 +61,29 @@ function MainGcodeEV() {
   //const [gcodeData, setGcodeData] = useState<string>("")
   const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
   const printResult = useRecoilValue(printResultState)
+  const filamentConfig = useRecoilValue(filamentConfigState)
 
   const memoPrintTime = useMemo(() => secToDayTime(printResult.print_time), [printResult])
+
+  const memoFilamentWeight = useMemo(()=>{
+    const fl = printResult.filament_length * 0.1 //mm to cm
+    const dm = Number(filamentConfig.filament_diameter) / 2.0  * 0.1 //mm to cm
+    const dens = Number(filamentConfig.filament_density) // g /cm3
+    const weight = Math.PI * dm * dm  * fl * dens //g
+    return weight
+  }, [printResult, filamentConfig])
+
+  const memoFilamentWeightShow = useMemo(()=>{
+
+    const weight_kg = Math.floor(memoFilamentWeight/1000)
+    const weight_g = memoFilamentWeight - (weight_kg*1000)
+    return `${weight_kg}kg ${weight_g.toFixed(2)}g`
+  }, [memoFilamentWeight])
+
+  const memoFilamentReel = useMemo(() =>{
+    const frw = Number(filamentConfig.filament_reel_weight)
+    return memoFilamentWeight / frw
+  }, [memoFilamentWeight])
 
   useEffect(() => {
     function handleResize() {
@@ -200,6 +222,22 @@ function MainGcodeEV() {
                 </div>
                 <div className="bg-teal-200 rounded-r-lg p-1">
                   {printResult.filament_length.toFixed(2)}mm
+                </div>
+              </div>
+              <div className="flex text-black text-nowrap mx-3 my-1">
+                <div className="bg-teal-500 rounded-l-lg p-1">
+                  フィラメント重量
+                </div>
+                <div className="bg-teal-200 rounded-r-lg p-1">
+                  {memoFilamentWeightShow}
+                </div>
+              </div>
+              <div className="flex text-black text-nowrap mx-3 my-1">
+                <div className="bg-teal-500 rounded-l-lg p-1">
+                  リール数
+                </div>
+                <div className="bg-teal-200 rounded-r-lg p-1">
+                  {memoFilamentReel.toFixed(2)}リール
                 </div>
               </div>
             </div>
