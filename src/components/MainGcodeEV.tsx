@@ -51,12 +51,15 @@ function MainGcodeEV() {
   const [editorWidth, setEditorWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
   const [viewerWidth, setViewerWidth] = useState(0);
-
   const [contentsHidden, setContentsHidden] = useState(false);
+
 
   const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const [viewControl, setViewControl] = useRecoilState(viewControlState)
   const [enableLineSelect, setEnableLineSelect] = useRecoilState(enableLineSelectState)
+
+  const [startLayerInput, setStartLayerInput] = useState(viewControl["start_layer"].toString())
+  const [endLayerInput, setEndLayerInput] = useState(viewControl["end_layer"].toString())
 
   //const [gcodeData, setGcodeData] = useState<string>("")
   const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
@@ -154,28 +157,39 @@ function MainGcodeEV() {
   //TODO: end layer以上にならないようにする
   // 以上になったらend layer側を増加させる
   const handleChangeViewStartLayer = (e:any)=>{
-    setViewControl((prev:any)=>{
-      const new_prev = {...prev}
-      new_prev.start_layer =  parseInt(e.target.value)
-      if(prev.mode === 1){
-        new_prev.end_layer = parseInt(e.target.value)
+    setStartLayerInput(e.target.value)
+    const new_value = parseInt(e.target.value)
+    if(!isNaN(new_value)){
+      if(0 <= new_value && new_value <= viewerObjects.length-1){
+        setViewControl((prev:any)=>{
+          const new_prev = {...prev}
+          new_prev.start_layer =  new_value
+          if(prev.mode === 1){
+            new_prev.end_layer = new_value
+          }
+          return new_prev
+        })
       }
-      return new_prev
-    })
-
+    }
   }
 
   //TODO: start layer以下にならないようにする
   // 以下になったらstart layer側を減少させる
   const handleChangeViewEndLayer = (e:any)=>{
-    setViewControl((prev:any)=>{
-      const new_prev = {...prev}
-      new_prev.end_layer =  parseInt(e.target.value)
-      if(prev.mode === 1){
-        new_prev.start_layer = parseInt(e.target.value)
+    setEndLayerInput(e.target.value)
+    const new_value = parseInt(e.target.value)
+    if(!isNaN(new_value)){
+      if(0 <= new_value && new_value <= viewerObjects.length-1){
+        setViewControl((prev:any)=>{
+          const new_prev = {...prev}
+          new_prev.end_layer =  new_value
+          if(prev.mode === 1){
+            new_prev.start_layer = new_value
+          }
+          return new_prev
+        })
       }
-      return new_prev
-    })
+    }
   }
 
   //TODO: modeが変わったらステータスの状態を変更する
@@ -272,7 +286,7 @@ function MainGcodeEV() {
               </div>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">start layer:</span>
-                <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} onChange={handleChangeViewStartLayer}></input>
+                <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={startLayerInput} onChange={handleChangeViewStartLayer}></input>
                 <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
               </div>
               <div>
@@ -281,7 +295,7 @@ function MainGcodeEV() {
               </div>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">end layer:</span>
-                <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} onChange={handleChangeViewEndLayer}></input>
+                <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={endLayerInput} onChange={handleChangeViewEndLayer}></input>
                 <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
               </div>
               <div>

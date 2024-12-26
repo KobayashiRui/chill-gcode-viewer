@@ -59,7 +59,14 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
     const buffer_array = new Float32Array(line_segments.length * 10);
 
     let show_start = start
+    if(show_start >= line_segments.length){
+      show_start = line_segments
+    }
     let show_end = end === null ? line_segments.length : end
+    if(show_end >= line_segments.length){
+      show_end = line_segments.length
+    }
+
     console.log(line_segments)
     console.log("view_setting:", view_setting)
   
