@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import { useThree, extend } from '@react-three/fiber'
