@@ -99,14 +99,6 @@ function MainGcodeEV() {
           setViewerWidth(viewerContainerRef.current.clientWidth-5);
           setContentsHidden(false)
         },100)
-  //   if(editorContainerRef.current && viewerContainerRef.current) {
-  //      console.log("resize window:", editorContainerRef.current.clientHeight, ",", editorContainerRef.current.clientWidth)
-  //      setEditorHeight(editorContainerRef.current.clientHeight-10); // 親要素の現在の高さをセット
-  //      setViewHeight(viewerContainerRef.current.clientHeight-20); // 親要素の現在の高さをセット
-  //      setEditorWidth(window.innerWidth * 2.0/6.0 - 10)
-  //      setViewerWidth(window.innerWidth * 4.0/6.0 - 10)
-  //      console.log(window.innerWidth * 4.0/6.0)
-  //    }
     }
 
     window.addEventListener('resize', handleResize);
@@ -114,18 +106,6 @@ function MainGcodeEV() {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []); // 空の依存配列でマウントとアンマウント時のみ実行
-
-  //useEffect(()=>{
-  //    if(contentsHidden){
-  //      console.log("Show")
-  //      setEditorHeight(editorContainerRef.current.clientHeight);
-  //      setEditorWidth(editorContainerRef.current.clientWidth);
-  //      setViewerHeight(viewerContainerRef.current.clientHeight);
-  //      setViewerWidth(viewerContainerRef.current.clientWidth);
-  //      setContentsHidden(false)
-  //    }
-  //},[contentsHidden])  
-
 
   const handleInputFile = (event:React.ChangeEvent<HTMLInputElement>) => {
     const files = event.currentTarget.files;
@@ -257,11 +237,7 @@ function MainGcodeEV() {
             </div>
             <div className="grow w-full border p-0.5">
               <div ref={editorContainerRef} className="h-full w-full">
-              {
-              //<div className="h-full w-full">Test</div>
-              <GcodeEditor ref={gcodeEditorRef} hidden={contentsHidden} height={editorHeight} width={editorWidth}></GcodeEditor>
-              }
-
+                <GcodeEditor ref={gcodeEditorRef} hidden={contentsHidden} height={editorHeight} width={editorWidth}></GcodeEditor>
               </div>
             </div>
             <div className="border p-1  pb-10">
@@ -307,10 +283,7 @@ function MainGcodeEV() {
           <div ref={viewerContainerRef} className="flex-1 border p-0.5">
             <div ref={viewerContainerRef} className="h-full w-full">
               <ViewSetting></ViewSetting>
-            {
-              //<div className="h-full w-full">Test</div>
               <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
-            }
             </div>
           </div>
 

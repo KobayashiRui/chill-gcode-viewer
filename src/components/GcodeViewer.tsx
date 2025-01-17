@@ -31,34 +31,6 @@ function GcodeViewer({hidden, height, width}:any) {
     }
   }, [cameraSetting])
 
-
-  
-
-  //useEffect(() => {
-  //  function handleResize() {
-  //    if(!canvasHidden){
-  //      setCanvasHidden(true)
-  //    }
-  //   //if(canvasContainerRef.current) {
-  //    //console.log("H:",canvasContainerRef.current.clientHeight)
-  //    //setCanvasHeight(canvasContainerRef.current.clientHeight)
-  //    //}
-  //  }
-
-  //  window.addEventListener('resize', handleResize);
-  //  handleResize(); // 初期サイズを設定
-
-  //  return () => window.removeEventListener('resize', handleResize);
-  //}, []); 
-
-  //useEffect(() => {
-  //  if(canvasHeight){
-  //    setCanvasHeight(canvasContainerRef.current.clientHeight)
-  //    setCanvasWidth(canvasContainerRef.current.clientWidth)
-  //    setCanvasHidden(false)
-  //  }
-  //},[canvasHidden])
-
   return (
       <Canvas 
         hidden={hidden}
