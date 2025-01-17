@@ -26,6 +26,8 @@ type GcodeState = {
     selectedRow: SelectedRow;
     headGeometry: any;
     enableHead: boolean;
+    headPosition: [number, number, number];
+
     setGcodeData: (gcodeData: string) => void;
     setViewerObjects: (viewerObjects:any[]) => void;
     setPrintResult: (printResult: PrintResult) => void;
@@ -35,6 +37,7 @@ type GcodeState = {
     setSelectedRow: (selectedRow: SelectedRow) => void;
     setHeadGeometry: (headGeometry: any) => void;
     setEnableHead: (enableHead:boolean) => void;
+    setHeadPosition: (headPosition: [number, number, number]) => void;
 }
 
 const useGcodeStateStore = create<GcodeState>()((set) => ({
@@ -46,6 +49,7 @@ const useGcodeStateStore = create<GcodeState>()((set) => ({
     selectedRow: {from:1, to:1},
     headGeometry: null,
     enableHead: false,
+    headPosition: [0.0, 0.0, 0.0],
 
     setGcodeData: (gcodeData) => set(() => ({gcodeData:gcodeData})),
     setViewerObjects: (viewerObjects) => set(() => ({viewerObjects:viewerObjects})),
@@ -56,6 +60,7 @@ const useGcodeStateStore = create<GcodeState>()((set) => ({
     setSelectedRow: (selectedRow) => set(() => ({selectedRow: selectedRow})),
     setHeadGeometry: (headGometry) => set(() => ({headGeometry: headGometry})),
     setEnableHead: (enableHead) => set(() => ({enableHead:enableHead})),
+    setHeadPosition: (headPosition) => set(() => ({headPosition:headPosition})),
 }))
 
 export default useGcodeStateStore;
