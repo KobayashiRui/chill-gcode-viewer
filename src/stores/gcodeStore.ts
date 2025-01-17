@@ -24,6 +24,8 @@ type GcodeState = {
     enableLineSelect: boolean;
     viewControl: ViewControl;
     selectedRow: SelectedRow;
+    headGeometry: any;
+    enableHead: boolean;
     setGcodeData: (gcodeData: string) => void;
     setViewerObjects: (viewerObjects:any[]) => void;
     setPrintResult: (printResult: PrintResult) => void;
@@ -31,6 +33,8 @@ type GcodeState = {
     setViewControl: ( updater: (prev:ViewControl) => ViewControl) => void;
     resetViewControl : () => void;
     setSelectedRow: (selectedRow: SelectedRow) => void;
+    setHeadGeometry: (headGeometry: any) => void;
+    setEnableHead: (enableHead:boolean) => void;
 }
 
 const useGcodeStateStore = create<GcodeState>()((set) => ({
@@ -40,6 +44,8 @@ const useGcodeStateStore = create<GcodeState>()((set) => ({
     enableLineSelect: false,
     viewControl: {mode:0, startLayer:0, endLayer:0},
     selectedRow: {from:1, to:1},
+    headGeometry: null,
+    enableHead: false,
 
     setGcodeData: (gcodeData) => set(() => ({gcodeData:gcodeData})),
     setViewerObjects: (viewerObjects) => set(() => ({viewerObjects:viewerObjects})),
@@ -48,6 +54,8 @@ const useGcodeStateStore = create<GcodeState>()((set) => ({
     setViewControl: (updater) => set((state) => ({viewControl: updater(state.viewControl)})),
     resetViewControl: () => set(() => ({viewControl: {mode:0, startLayer:0, endLayer:0}})),
     setSelectedRow: (selectedRow) => set(() => ({selectedRow: selectedRow})),
+    setHeadGeometry: (headGometry) => set(() => ({headGeometry: headGometry})),
+    setEnableHead: (enableHead) => set(() => ({enableHead:enableHead})),
 }))
 
 export default useGcodeStateStore;

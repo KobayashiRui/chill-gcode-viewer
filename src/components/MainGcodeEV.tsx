@@ -21,6 +21,7 @@ import FileOutput from "./FileOutput";
 import GcodeToPath from "./GcodeToPath"
 import ConfigModal from "./ConfigModal"
 import ViewSetting from "./ViewSetting";
+import MoveControler from "./MoveControler";
 
 function secToDayTime(seconds:number) {
   const day = Math.floor(seconds / 86400);
@@ -296,10 +297,10 @@ function MainGcodeEV() {
           <div className="flex-1 border p-0.5">
             <div ref={viewerContainerRef} className="h-full w-full">
               <ViewSetting></ViewSetting>
+              <MoveControler></MoveControler>
               <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
             </div>
           </div>
-
         </div>
       </div>
 
