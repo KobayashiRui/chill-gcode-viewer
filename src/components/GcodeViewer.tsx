@@ -15,6 +15,9 @@ function GcodeViewer({hidden, height, width}:any) {
   //const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
   const cameraMode = useViewSettingStore((state)=>state.cameraMode)
+  const headGeometry = useGcodeStateStore((state)=>state.headGeometry)
+  const enableHead = useGcodeStateStore((state)=> state.enableHead)
+  const headPosition = useGcodeStateStore((state)=> state.headPosition)
 
   const canvas_size:any = [1000, 1000] //mm単位
 
@@ -61,6 +64,12 @@ function GcodeViewer({hidden, height, width}:any) {
         <Line3
           lineSegments={viewerObjects}
         ></Line3>
+        {
+          (enableHead && headGeometry) &&
+          <mesh geometry={headGeometry} position={headPosition}>
+            <meshStandardMaterial color="orange"></meshStandardMaterial>
+          </mesh>
+        }
         <OrbitControls makeDefault></OrbitControls>
         <axesHelper args={[50]} />
         <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
