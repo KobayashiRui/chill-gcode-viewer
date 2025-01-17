@@ -72,10 +72,10 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
   
     let type_show = [true, true]
     if(view_setting !== null){
-      if(!view_setting.move_line){
+      if(!view_setting.moveLine){
         type_show[0] = false
       }
-      if(!view_setting.extrude_line){
+      if(!view_setting.extrudeLine){
         type_show[1] = false
       }
     }

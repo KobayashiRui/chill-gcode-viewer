@@ -1,19 +1,12 @@
-import { useRecoilState } from "recoil"
-import { filamentConfigState } from "../atoms/ConfigState"
+//import { useRecoilState } from "recoil"
+//import { filamentConfigState } from "../atoms/ConfigState"
+import useConfigStore from "../stores/configStore"
+import { useShallow } from "zustand/react/shallow"
 
 export default function ConfigModal(){
 
-  const [filamentConfig, setFilamentConfig] = useRecoilState(filamentConfigState)
-
-  const handleChangeFilamentConfig = (fkey: string, value:any) =>{
-    setFilamentConfig((prov:any)=>{
-      const new_value = {...prov}
-      new_value[fkey] = value
-      return new_value
-    })
-
-  }
-
+  //const [filamentConfig, setFilamentConfig] = useRecoilState(filamentConfigState)
+  const [filamentConfig, setFilamentConfig] = useConfigStore(useShallow((state) => [state.filamentConfig, state.setFilamentConfig]))
 
   return (
     <>
@@ -29,8 +22,8 @@ export default function ConfigModal(){
                 <td className="font-bold">Filament diameter</td>
                 <td className="flex flex-row items-center">
                   <input className="input input-bordered input-primary input-sm w-20 max-w-xs bg-gray-200 ml-2 mr-1"
-                    value={filamentConfig.filament_diameter}
-                    onChange={(e:any)=>{handleChangeFilamentConfig("filament_diameter", e.target.value)}}
+                    value={filamentConfig.filamentDiameter}
+                    onChange={(e:any)=>{setFilamentConfig("filamentDiameter", e.target.value)}}
                   ></input>
                   <div>mm</div>
                 </td>
@@ -39,8 +32,8 @@ export default function ConfigModal(){
                 <td className="font-bold">Filament density</td>
                 <td className="flex flex-row items-center">
                   <input className="input input-bordered input-primary input-sm w-20 max-w-xs bg-gray-200 ml-2 mr-1"
-                    value={filamentConfig.filament_density}
-                    onChange={(e:any)=>{handleChangeFilamentConfig("filament_density", e.target.value)}}
+                    value={filamentConfig.filamentDensity}
+                    onChange={(e:any)=>{setFilamentConfig("filamentDensity", e.target.value)}}
                   ></input>
                   <div>g/cm3</div>
                 </td>
@@ -49,8 +42,8 @@ export default function ConfigModal(){
                 <td className="font-bold">Filament cost</td>
                 <td className="flex flex-row items-center">
                   <input className="input input-bordered input-primary input-sm w-20 max-w-xs bg-gray-200 ml-2 mr-1"
-                    value={filamentConfig.filament_cost}
-                    onChange={(e:any)=>{handleChangeFilamentConfig("filament_cost", e.target.value)}}
+                    value={filamentConfig.filamentCost}
+                    onChange={(e:any)=>{setFilamentConfig("filamentCost", e.target.value)}}
                   ></input>
                   <div>円/kg</div>
                 </td>
@@ -59,8 +52,8 @@ export default function ConfigModal(){
                 <td className="font-bold">Filament reel weight</td>
                 <td className="flex flex-row items-center">
                   <input className="input input-bordered input-primary input-sm w-20 max-w-xs bg-gray-200 ml-2 mr-1"
-                    value={filamentConfig.filament_reel_weight}
-                    onChange={(e:any)=>{handleChangeFilamentConfig("filament_reel_weight", e.target.value)}}
+                    value={filamentConfig.filamentReelWeight}
+                    onChange={(e:any)=>{setFilamentConfig("filamentReelWeight", e.target.value)}}
                   ></input>
                   <div>g/reel</div>
                 </td>

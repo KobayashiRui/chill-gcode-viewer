@@ -1,9 +1,14 @@
 //View Controlの実装
 import {useEffect, useState, useRef, useMemo } from "react";
 
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { gcodeState, printResultState, viewerObjectsState, viewControlState, enableLineSelectState } from '../atoms/GcodeState';
-import { filamentConfigState } from "../atoms/ConfigState"
+//import { gcodeState, printResultState, viewerObjectsState, viewControlState, enableLineSelectState } from '../atoms/GcodeState';
+//import { filamentConfigState } from "../atoms/ConfigState"
+
+import useGcodeStateStore from "../stores/gcodeStore";
+import useConfigStore from "../stores/configStore";
+//import useViewSettingStore from "../stores/viewSettingStore";
+
+import { useShallow } from 'zustand/react/shallow'
 
 import { save } from '@tauri-apps/api/dialog';
 import { fs } from "@tauri-apps/api";
@@ -40,7 +45,6 @@ function FileInputButton(handler:any){
   return (
     <FileInput handleInputFile={handler}></FileInput>
   )
-
 }
 
 function MainGcodeEV() {
@@ -54,24 +58,36 @@ function MainGcodeEV() {
   const [contentsHidden, setContentsHidden] = useState(false);
 
 
-  const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
-  const [viewControl, setViewControl] = useRecoilState(viewControlState)
-  const [enableLineSelect, setEnableLineSelect] = useRecoilState(enableLineSelectState)
+  //const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
+  //const [viewControl, setViewControl] = useRecoilState(viewControlState)
+  //const [enableLineSelect, setEnableLineSelect] = useRecoilState(enableLineSelectState)
 
-  const [startLayerInput, setStartLayerInput] = useState(viewControl["start_layer"].toString())
-  const [endLayerInput, setEndLayerInput] = useState(viewControl["end_layer"].toString())
+  const viewerObjects = useGcodeStateStore((state) => state.viewerObjects)
+
+  const [viewControl, setViewControl] = useGcodeStateStore(useShallow((state) => [state.viewControl, state.setViewControl]))
+  const [enableLineSelect, setEnableLineSelect] = useGcodeStateStore(useShallow((state) => [state.enableLineSelect, state.setEnableLineSelect]))
+
+
+  const [startLayerInput, setStartLayerInput] = useState(viewControl["startLayer"].toString())
+  const [endLayerInput, setEndLayerInput] = useState(viewControl["endLayer"].toString())
 
   //const [gcodeData, setGcodeData] = useState<string>("")
-  const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
-  const printResult = useRecoilValue(printResultState)
-  const filamentConfig = useRecoilValue(filamentConfigState)
+  //const [gcodeData, setGcodeData] = useRecoilState(gcodeState)
+  //const printResult = useRecoilValue(printResultState)
+  //const filamentConfig = useRecoilValue(filamentConfigState)
 
-  const memoPrintTime = useMemo(() => secToDayTime(printResult.print_time), [printResult])
+  const [gcodeData, setGcodeData] = useGcodeStateStore(useShallow((state) => [state.gcodeData, state.setGcodeData]))
+
+  const printResult = useGcodeStateStore((state) => state.printResult)
+  const filamentConfig = useConfigStore((state)=> state.filamentConfig)
+
+
+  const memoPrintTime = useMemo(() => secToDayTime(printResult.printTime), [printResult.printTime])
 
   const memoFilamentWeight = useMemo(()=>{
-    const fl = printResult.filament_length * 0.1 //mm to cm
-    const dm = Number(filamentConfig.filament_diameter) / 2.0  * 0.1 //mm to cm
-    const dens = Number(filamentConfig.filament_density) // g /cm3
+    const fl = printResult.filamentLength * 0.1 //mm to cm
+    const dm = Number(filamentConfig.filamentDiameter) / 2.0  * 0.1 //mm to cm
+    const dens = Number(filamentConfig.filamentDensity) // g /cm3
     const weight = Math.PI * dm * dm  * fl * dens //g
     return weight
   }, [printResult, filamentConfig])
@@ -84,13 +100,12 @@ function MainGcodeEV() {
   }, [memoFilamentWeight])
 
   const memoFilamentReel = useMemo(() =>{
-    const frw = Number(filamentConfig.filament_reel_weight)
+    const frw = Number(filamentConfig.filamentReelWeight)
     return memoFilamentWeight / frw
   }, [memoFilamentWeight])
 
   useEffect(() => {
     function handleResize() {
-        console.log("hidden")
         setContentsHidden(true)
         setTimeout(() => {
           setEditorHeight(editorContainerRef.current.clientHeight-5);
@@ -141,11 +156,11 @@ function MainGcodeEV() {
     const new_value = parseInt(e.target.value)
     if(!isNaN(new_value)){
       if(0 <= new_value && new_value <= viewerObjects.length-1){
-        setViewControl((prev:any)=>{
+        setViewControl((prev)=>{
           const new_prev = {...prev}
-          new_prev.start_layer =  new_value
+          new_prev.startLayer =  new_value
           if(prev.mode === 1){
-            new_prev.end_layer = new_value
+            new_prev.endLayer = new_value
           }
           return new_prev
         })
@@ -160,11 +175,11 @@ function MainGcodeEV() {
     const new_value = parseInt(e.target.value)
     if(!isNaN(new_value)){
       if(0 <= new_value && new_value <= viewerObjects.length-1){
-        setViewControl((prev:any)=>{
+        setViewControl((prev)=>{
           const new_prev = {...prev}
-          new_prev.end_layer =  new_value
+          new_prev.endLayer =  new_value
           if(prev.mode === 1){
-            new_prev.start_layer = new_value
+            new_prev.startLayer = new_value
           }
           return new_prev
         })
@@ -181,8 +196,6 @@ function MainGcodeEV() {
       new_prev.mode =  parseInt(e.target.value)
       return new_prev
     })
-    
-
   }
 
   return (
@@ -215,7 +228,7 @@ function MainGcodeEV() {
                   フィラメント長さ
                 </div>
                 <div className="bg-teal-200 rounded-r-lg p-1">
-                  {printResult.filament_length.toFixed(2)}mm
+                  {printResult.filamentLength.toFixed(2)}mm
                 </div>
               </div>
               <div className="flex text-black text-nowrap mx-3 my-1">
@@ -263,24 +276,24 @@ function MainGcodeEV() {
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">start layer:</span>
                 <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={startLayerInput} onChange={handleChangeViewStartLayer}></input>
-                <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["start_layer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
+                <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["startLayer"]} className="range range-xs" onChange={handleChangeViewStartLayer} /> 
               </div>
               <div>
-                <span>Start Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["start_layer"]]["index"]+1: 0}</span>
-                <button className="btn btn-xs mx-2 btn-accent" onClick={()=> {gcodeEditorRef.current.goLine(viewerObjects[viewControl["start_layer"]]["index"]+1)}}>Go Row</button>
+                <span>Start Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["startLayer"]]["index"]+1: 0}</span>
+                <button className="btn btn-xs mx-2 btn-accent" onClick={()=> {gcodeEditorRef.current.goLine(viewerObjects[viewControl["startLayer"]]["index"]+1)}}>Go Row</button>
               </div>
               <div className="flex items-center">
                 <span className="text-nowrap mr-2">end layer:</span>
                 <input className="mr-2" type="number" min={0} max={viewerObjects.length-1} step="1" value={endLayerInput} onChange={handleChangeViewEndLayer}></input>
-                <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["end_layer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
+                <input type="range" min={0} max={viewerObjects.length-1} step="1" value={viewControl["endLayer"]} className="range range-xs" onChange={handleChangeViewEndLayer}/> 
               </div>
               <div>
-                <span>End Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["end_layer"]]["index"]+1: 0}</span>
-                <button className="btn btn-xs mx-2 btn-accent" onClick={()=> {gcodeEditorRef.current.goLine(viewerObjects[viewControl["end_layer"]]["index"]+1)}}>Go Row</button>
+                <span>End Gcode Row: {viewerObjects.length > 0 ? viewerObjects[viewControl["endLayer"]]["index"]+1: 0}</span>
+                <button className="btn btn-xs mx-2 btn-accent" onClick={()=> {gcodeEditorRef.current.goLine(viewerObjects[viewControl["endLayer"]]["index"]+1)}}>Go Row</button>
               </div>
             </div>
           </div>
-          <div ref={viewerContainerRef} className="flex-1 border p-0.5">
+          <div className="flex-1 border p-0.5">
             <div ref={viewerContainerRef} className="h-full w-full">
               <ViewSetting></ViewSetting>
               <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
