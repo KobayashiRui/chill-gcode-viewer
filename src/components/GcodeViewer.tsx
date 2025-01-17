@@ -3,15 +3,19 @@ import { Vector3, Euler, DoubleSide} from 'three'
 import { Canvas} from '@react-three/fiber'
 import { OrthographicCamera, PerspectiveCamera, Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
 
-import { useRecoilState, useRecoilValue} from "recoil"
-import { viewerObjectsState} from '../atoms/GcodeState';
-import {viewCameraSettingState} from '../atoms/ViewSettingState';
+//import { viewerObjectsState} from '../atoms/GcodeState';
+//import {viewCameraSettingState} from '../atoms/ViewSettingState';
+
+import useGcodeStateStore from '../stores/gcodeStore'
+import useViewSettingStore from '../stores/viewSettingStore'
 
 import {Line3} from './Line3Object/Line3'
 
 function GcodeViewer({hidden, height, width}:any) {
-  const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
-  const cameraSetting = useRecoilValue(viewCameraSettingState)
+  //const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
+  const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
+  const cameraMode = useViewSettingStore((state)=>state.cameraMode)
+
   const canvas_size:any = [1000, 1000] //mm単位
 
   const cameraRef = useRef<any>(null);
@@ -19,6 +23,12 @@ function GcodeViewer({hidden, height, width}:any) {
   const [cameraType, setCameraType] = useState(false)
   const [cameraPosition, setCameraPosition] = useState(new Vector3(450, -560, 580))
   const [cameraRotation, setCameraRotation] = useState(new Euler(1.0, 0.13, 0.08))
+  
+  useEffect(()=>{
+    console.log("viewer objects:")
+    console.log(viewerObjects)
+
+  }, [viewerObjects])
 
   useEffect(()=>{
     if(cameraRef.current !== null){
@@ -27,37 +37,9 @@ function GcodeViewer({hidden, height, width}:any) {
       setCameraRotation(rotation.clone())
       console.log("pos:",position)
       console.log("rot:", rotation)
-      setCameraType(cameraSetting)
+      setCameraType(cameraMode)
     }
-  }, [cameraSetting])
-
-
-  
-
-  //useEffect(() => {
-  //  function handleResize() {
-  //    if(!canvasHidden){
-  //      setCanvasHidden(true)
-  //    }
-  //   //if(canvasContainerRef.current) {
-  //    //console.log("H:",canvasContainerRef.current.clientHeight)
-  //    //setCanvasHeight(canvasContainerRef.current.clientHeight)
-  //    //}
-  //  }
-
-  //  window.addEventListener('resize', handleResize);
-  //  handleResize(); // 初期サイズを設定
-
-  //  return () => window.removeEventListener('resize', handleResize);
-  //}, []); 
-
-  //useEffect(() => {
-  //  if(canvasHeight){
-  //    setCanvasHeight(canvasContainerRef.current.clientHeight)
-  //    setCanvasWidth(canvasContainerRef.current.clientWidth)
-  //    setCanvasHidden(false)
-  //  }
-  //},[canvasHidden])
+  }, [cameraMode])
 
   return (
       <Canvas 

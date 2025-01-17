@@ -1,21 +1,25 @@
 import React, {useEffect, useRef, forwardRef, useImperativeHandle} from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 //import { javascript } from '@codemirror/lang-javascript';
-import { useRecoilState } from 'recoil';
-import { gcodeState, selectedRowState } from '../atoms/GcodeState';
+//import { useRecoilState } from 'recoil';
+//import { gcodeState, selectedRowState } from '../atoms/GcodeState';
+import useGcodeStateStore from '../stores/gcodeStore';
+import { useShallow } from 'zustand/react/shallow'
 
 const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
   const editorRef = useRef<any>(null)
 
   //const [value, setValue] = useState(gcode_data);
-  const [value, setValue] = useRecoilState(gcodeState)
-  const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
-  console.log(height)
+  //const [value, setValue] = useRecoilState(gcodeState)
+  const [gcodeData, setGcodeData] = useGcodeStateStore(useShallow((state) => [state.gcodeData, state.setGcodeData]))
+  const [selectedRow, setSelectedRow] = useGcodeStateStore(useShallow((state) => [state.selectedRow, state.setSelectedRow]))
+
+  //const [selectedRow, setSelectedRow] = useRecoilState(selectedRowState)
 
   const onChange = React.useCallback((val:any, _viewUpdate:any) => {
     //console.log('val:', val);
     console.log(editorRef.current)
-    setValue(val);
+    setGcodeData(val);
   }, []);
 
   //useEffect(() => {
@@ -80,7 +84,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
   return (
     <div>
     {
-      <CodeMirror ref={editorRef} hidden={hidden} height={`${height}px`} width={`${width}px`} value={value} onChange={onChange} onUpdate={onUpdate}/>
+      <CodeMirror ref={editorRef} hidden={hidden} height={`${height}px`} width={`${width}px`} value={gcodeData} onChange={onChange} onUpdate={onUpdate}/>
     }
     </div>
   )
