@@ -6,7 +6,7 @@ function MoveControler(){
 	const [enableHead, setEnableHead] = useGcodeStateStore(useShallow((state)=>[state.enableHead, state.setEnableHead]))
 
 	const setViewControl = useGcodeStateStore((state)=> state.setViewControl)
-  const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
+  	const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
 	const setHeadPosition = useGcodeStateStore((state)=> state.setHeadPosition)
 
 	const [nowIndex, setNowIndex] = useState("0")
@@ -104,33 +104,54 @@ function MoveControler(){
     };
   }, []);
 
+  const IntersectionCheck = () => {
+    
+
+  }
+
 
   return (
     <div className="absolute w-1/2 bottom-2 flex flex-col gap-2 bg-gray-200 m-4 rounded-md p-4 z-40">
-			<h2 className="text-gray-900 font-bold">Move Controler</h2>
-    	<div className="flex items-center">
-    	  <div className="mr-2 text-gray-800">Show Head</div> 
-    	  <input type="checkbox" className="toggle toggle-info" checked={enableHead} onChange={handleCheckHeadMode}/>
+		<h2 className="text-gray-900 font-bold">Move Controler</h2>
+    	<div className="flex justify-between">
+        <div className="flex flex-col">
+          <div className="flex items-center">
+    	     <div className="mr-2 text-gray-800">Show Head</div> 
+    	     <input type="checkbox" className="toggle toggle-info" checked={enableHead} onChange={handleCheckHeadMode}/>
+          </div>
+		      <div className="flex items-center">
+          	  <span className="mr-2 text-gray-800">Move simulator</span> 
+		      		<button className="btn btn-sm btn-circle mx-2" onClick={handleStartSimulator}>
+		      			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-5">
+		      			  <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+		      			</svg>
+		      		</button>
+		      		<button className="btn btn-sm btn-squre mx-2" onClick={handleStopSimulator}>
+		      			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-5">
+		      			  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+		      			</svg>
+		      		</button>
+		      		<div>
+		      			<span className="ml-2 mr-2 text-gray-800">Update Speed</span>
+		      			<input type="number" className="input input-bordered input-sm w-24" step={0.1} value={simSpeed} onChange={(e:any) => setSimSpeed(e.target.value)} />
+		      			<span className="mr-2 text-gray-800">[s]</span>
+		      		</div>
+		      </div>
+        </div>
+
+        <div className="border  border-sky-800 rounded p-2">
+          <div className="flex items-center">
+    	      <div className="text-gray-800 mr-4">Intersection Check</div> 
+            <button className="btn btn-sm">Check Start</button>
+          </div>
+          <div>
+            <span className="text-gray-700 mr-4">Check Result:</span>
+
+          </div>
+
+        </div>
     	</div>
-			<div className="flex items-center">
-    	  <span className="mr-2 text-gray-800">Move simulator</span> 
-				<button className="btn btn-sm btn-circle mx-2" onClick={handleStartSimulator}>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-5">
-					  <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
-					</svg>
-				</button>
-				<button className="btn btn-sm btn-squre mx-2" onClick={handleStopSimulator}>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-5">
-					  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-					</svg>
-				</button>
-				<div>
-					<span className="ml-2 mr-2 text-gray-800">Update Speed</span>
-					<input type="number" className="input input-bordered input-sm w-24" step={0.1} value={simSpeed} onChange={(e:any) => setSimSpeed(e.target.value)} />
-					<span className="mr-2 text-gray-800">[s]</span>
-				</div>
-			</div>
-			<input type="range" min={minIndex} max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
+		<input type="range" min={minIndex} max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
     </div>
   )
 }

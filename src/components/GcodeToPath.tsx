@@ -10,7 +10,7 @@ class ArcSupport{
   constructor(){
     this.resolution = 1.0
   }
-  arcToSegments(start_pos: Vector3, target_pos:Vector3, offset:[number, number], clockwise=true){
+  arcToSegments(start_pos: Vector3, target_pos:Vector3, offset:[number, number], clockwise=true): Vector3[][]{
     const r_p = -offset[0]
     const r_q = -offset[1]
     const center_p = start_pos.x - r_p
@@ -216,7 +216,7 @@ function GcodeToPath(){
             }
 
             const arc_support = new ArcSupport()
-            const line_segments = arc_support.arcToSegments(start_pos, target_pos, offsets, true)
+            const line_segments= arc_support.arcToSegments(start_pos, target_pos, offsets, true)
 
             for(let j=0; j<line_segments.length; j++) {
               const move_vec = new Vector3();

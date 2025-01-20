@@ -1,6 +1,4 @@
-//import { useRecoilState } from "recoil"
-//import { filamentConfigState } from "../atoms/ConfigState"
-import {useState, useRef} from "react"
+import {useState, useRef, useEffect} from "react"
 import useConfigStore from "../stores/configStore"
 import { useShallow } from "zustand/react/shallow"
 import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
@@ -11,11 +9,11 @@ import {Vector3, Euler, Mesh, MeshStandardMaterial} from 'three'
 import useGcodeStateStore from "../stores/gcodeStore";
 
 
-function STLInput(){
+function STLInput({dialogOpen}: {dialogOpen: boolean}){
   const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const geometry = useGcodeStateStore((state)=>state.headGeometry)
-  const setGeometry = useGcodeStateStore((state)=>state.setHeadGeometry)
+  const headMesh = useGcodeStateStore((state)=>state.headMesh)
+  const setHeadMesh = useGcodeStateStore((state)=>state.setHeadMesh)
 
   const handleInputFile = (event:React.ChangeEvent<HTMLInputElement>) => {
     const files = event.currentTarget.files;
@@ -30,11 +28,11 @@ function STLInput(){
       const stl_loader = new STLLoader()
       const geometry = stl_loader.parse(reader.result);
       console.log(geometry)
-      setGeometry(geometry)
-      //const mesh = new Mesh()
-      //mesh.geometry = geometry
-      //mesh.material = new MeshStandardMaterial({color:"red", wireframe:false})
-      //setMesh(mesh)
+      //setGeometry(geometry)
+      const mesh = new Mesh()
+      mesh.geometry = geometry
+      mesh.material = new MeshStandardMaterial({color:"red", wireframe:false})
+      setHeadMesh(mesh)
 
       event.target.value = "";
     });
@@ -57,10 +55,11 @@ function STLInput(){
 
         <PerspectiveCamera makeDefault up={[0,0,1]} fov={75} position={new Vector3(100, 100, 100)} rotation={new Euler(1.0, 0.13, 0.08)} near={10} far={10000} />
         {
-          geometry !== null &&
-          <mesh geometry={geometry}>
-            <meshStandardMaterial color="orange"></meshStandardMaterial>
-          </mesh>
+          headMesh !== null &&
+          <primitive object={headMesh}></primitive>
+          //<mesh geometry={geometry}>
+          //  <meshStandardMaterial color="orange"></meshStandardMaterial>
+          //</mesh>
         }
         <ambientLight />
         <pointLight position={[100, 100, 100]} intensity={10000}/>
@@ -72,12 +71,34 @@ function STLInput(){
 }
 
 export default function ConfigModal(){
-
-  //const [filamentConfig, setFilamentConfig] = useRecoilState(filamentConfigState)
   const [filamentConfig, setFilamentConfig] = useConfigStore(useShallow((state) => [state.filamentConfig, state.setFilamentConfig]))
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  useEffect(()=>{
+    const dialogElement = document.getElementById("config_modal")
+
+    const observer = new MutationObserver(() => {
+      if (dialogElement?.hasAttribute('open')) {
+        console.log("show")
+        setDialogOpen(true); // ダイアログが開いた
+      } else {
+        console.log("close")
+        setDialogOpen(false); // ダイアログが閉じた
+      }
+    });
+
+    // `open`属性の変更を監視
+    if (dialogElement) {
+      observer.observe(dialogElement, { attributes: true });
+    }
+
+    // クリーンアップ処理
+    return () => {
+      observer.disconnect();
+    };
+  },[])
 
   return (
-    <>
       <dialog id="config_modal" className="modal">
         <div className="modal-box w-11/12 max-w-full h-5/6 max-h-full bg-neutral-200 text-neutral-800">
           <h1 className="font-bold text-2xl text-emerald-500 mb-4">Chill Gcode Viewer Config</h1>
@@ -179,7 +200,13 @@ export default function ConfigModal(){
             </div>
             <div>
               <h2 className="font-bold text-lg mb-2">Head model</h2>
-              <STLInput></STLInput>
+              {
+                //TODO: この方法だとラグが発生するので修正する
+                dialogOpen &&
+                <STLInput
+                  dialogOpen={dialogOpen}
+                ></STLInput>
+              }
 
             </div>
           </div>
@@ -192,7 +219,6 @@ export default function ConfigModal(){
           </div>
         </div>
       </dialog>
-    </>
   )
 
 }

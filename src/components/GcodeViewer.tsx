@@ -2,6 +2,7 @@ import {useRef, useState, useEffect} from 'react'
 import { Vector3, Euler, DoubleSide} from 'three'
 import { Canvas} from '@react-three/fiber'
 import { OrthographicCamera, PerspectiveCamera, Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
+import { Bvh } from '@react-three/drei'
 
 //import { viewerObjectsState} from '../atoms/GcodeState';
 //import {viewCameraSettingState} from '../atoms/ViewSettingState';
@@ -15,7 +16,7 @@ function GcodeViewer({hidden, height, width}:any) {
   //const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
   const cameraMode = useViewSettingStore((state)=>state.cameraMode)
-  const headGeometry = useGcodeStateStore((state)=>state.headGeometry)
+  const headMesh = useGcodeStateStore((state)=>state.headMesh)
   const enableHead = useGcodeStateStore((state)=> state.enableHead)
   const headPosition = useGcodeStateStore((state)=> state.headPosition)
 
@@ -52,6 +53,7 @@ function GcodeViewer({hidden, height, width}:any) {
         //style={{height:`100%`, width:`100%`}}
         //resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
       >
+        <Bvh firstHitOnly>
         {
           cameraType ? 
             <OrthographicCamera ref={cameraRef} makeDefault up={[0,0,1]} position={cameraPosition} rotation={cameraRotation} zoom={1} near={10} far={10000} />
@@ -65,16 +67,15 @@ function GcodeViewer({hidden, height, width}:any) {
           lineSegments={viewerObjects}
         ></Line3>
         {
-          (enableHead && headGeometry) &&
-          <mesh geometry={headGeometry} position={headPosition}>
-            <meshStandardMaterial color="orange"></meshStandardMaterial>
-          </mesh>
+          (enableHead && headMesh) &&
+          <primitive object={headMesh} position={headPosition}></primitive>
         }
         <OrbitControls makeDefault></OrbitControls>
         <axesHelper args={[50]} />
         <GizmoHelper alignment={"top-right"} margin={[80, 80]}>
           <GizmoViewport {...{ axisColors: ["#f73b3b", "#3bf751", "#3b87f7"]}} />
         </GizmoHelper>
+        </Bvh>
       </Canvas>
   )
 }
