@@ -109,10 +109,11 @@ export const Line3 = React.forwardRef<
 
 
   const handleClick = (event:any) => {
-    //console.log("handleClick")
+    console.log("handleClick")
     //console.log(event)
     //console.log("click:", getSelectedIndex(event.faceIndex))
     //console.log(lineSegments[event.faceIndex])
+    console.log(event)
     const selected_index = getSelectedIndex(event.faceIndex)
     setSelectedRow({from:selected_index, to:selected_index})
   }

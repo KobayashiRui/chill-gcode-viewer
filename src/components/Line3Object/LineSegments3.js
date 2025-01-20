@@ -48,6 +48,9 @@ function getWorldSpaceHalfWidth(camera, distance, resolution) {
 }
 
 function raycastWorldUnits(lineSegments, intersects) {
+
+  const lineIndex = geometry.getAttribute('lineIndex')
+
   for (let i = 0, l = _instanceStart.count; i < l; i++) {
     _line.start.fromBufferAttribute(_instanceStart, i)
     _line.end.fromBufferAttribute(_instanceEnd, i)
@@ -58,6 +61,10 @@ function raycastWorldUnits(lineSegments, intersects) {
     _ray.distanceSqToSegment(_line.start, _line.end, point, pointOnLine)
     const isInside = point.distanceTo(pointOnLine) < _lineWidth * 0.5
 
+
+    const index_value = lineIndex.getX(i); 
+
+
     if (isInside) {
       intersects.push({
         point,
@@ -65,7 +72,7 @@ function raycastWorldUnits(lineSegments, intersects) {
         distance: _ray.origin.distanceTo(point),
         object: lineSegments,
         face: null,
-        faceIndex: i,
+        faceIndex: index_value,
         uv: null,
         uv2: null,
       })
@@ -82,6 +89,7 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
   const geometry = lineSegments.geometry
   const instanceStart = geometry.attributes.pointA
   const instanceEnd = geometry.attributes.pointB
+  const lineIndex = geometry.getAttribute('lineIndex')
 
   const near = -camera.near
 
@@ -110,6 +118,8 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
   for (let i = 0, l = instanceStart.count; i < l; i++) {
     _start4.fromBufferAttribute(instanceStart, i)
     _end4.fromBufferAttribute(instanceEnd, i)
+
+    const index_value = lineIndex.getX(i); 
 
     _start4.w = 1
     _end4.w = 1
@@ -185,7 +195,7 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
         distance: _ray.origin.distanceTo(point),
         object: lineSegments,
         face: null,
-        faceIndex: i,
+        faceIndex: index_value,
         uv: null,
         uv2: null,
       })

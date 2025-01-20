@@ -54,9 +54,19 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
     return this
   }
 
+  calcLineSegmentsBuffer(line_segments){
+    let count_buffer = 0
+    for(let i=0; i<line_segments.length; i++){
+      count_buffer += line_segments[i].points.length
+    }
+    return count_buffer
+  }
+
   setPositions(line_segments, start=0, end=null, selected_row, view_setting=null) {
 
-    const buffer_array = new Float32Array(line_segments.length * 10);
+    const buffer_size = this.calcLineSegmentsBuffer(line_segments)
+
+    const buffer_array = new Float32Array(buffer_size * 11);
 
     let show_start = start
     if(show_start >= line_segments.length){
@@ -80,41 +90,51 @@ class LineSegments3Geometry extends InstancedBufferGeometry {
       }
     }
 
+    let buffer_count = 0
     for (let i = 0; i < show_end; i++) {
       if(!type_show[line_segments[i+show_start].type]){
         continue
       }
-      // pointAの座標を設定
-      buffer_array[i * 10 + 0] = line_segments[i+show_start].points[0].x;
-      buffer_array[i * 10 + 1] = line_segments[i+show_start].points[0].y;
-      buffer_array[i * 10 + 2] = line_segments[i+show_start].points[0].z;
-      // pointBの座標を設定
-      buffer_array[i * 10 + 3] = line_segments[i+show_start].points[1].x;
-      buffer_array[i * 10 + 4] = line_segments[i+show_start].points[1].y;
-      buffer_array[i * 10 + 5] = line_segments[i+show_start].points[1].z;
+      const line_segment = line_segments[i+show_start]
+      for(let p_index = 0; p_index < line_segment.points.length; p_index++) {
+        const line_point = line_segment.points[p_index]
 
-      const line_index = line_segments[i+show_start].index
-      let line_color = line_segments[i+show_start].color
-      let line_width = line_segments[i+show_start].width
+        // pointAの座標を設定
+        const buffer_attr =  buffer_count * 11
+        buffer_array[buffer_attr + 0] = line_point[0].x;
+        buffer_array[buffer_attr + 1] = line_point[0].y;
+        buffer_array[buffer_attr + 2] = line_point[0].z;
+        // pointBの座標を設定
+        buffer_array[buffer_attr + 3] = line_point[1].x;
+        buffer_array[buffer_attr + 4] = line_point[1].y;
+        buffer_array[buffer_attr + 5] = line_point[1].z;
+
+        const line_index = line_segment.index
+        let line_color = line_segment.color
+        let line_width = line_segment.width
       
-      if(selected_row && (selected_row.from -1) <= line_index && line_index <= (selected_row.to-1)){
-        line_color = "#ffff00"
-        line_width = 8
-      }
-      const color = new Color(line_color);
-      buffer_array[i * 10 + 6] = color.r;
-      buffer_array[i * 10 + 7] = color.g;
-      buffer_array[i * 10 + 8] = color.b;
+        if(selected_row && (selected_row.from -1) <= line_index && line_index <= (selected_row.to-1)){
+          line_color = "#ffff00"
+          line_width = 8
+        }
+        const color = new Color(line_color);
+        buffer_array[buffer_attr + 6] = color.r;
+        buffer_array[buffer_attr + 7] = color.g;
+        buffer_array[buffer_attr + 8] = color.b;
 
-      buffer_array[i * 10 + 9] = line_width;
+        buffer_array[buffer_attr + 9] = line_width;
+        buffer_array[buffer_attr + 10] = i
+        buffer_count += 1
+      }
     }
 
-    const instanceBuffer = new InstancedInterleavedBuffer(buffer_array, 10);
+    const instanceBuffer = new InstancedInterleavedBuffer(buffer_array, 11);
 
     this.setAttribute('pointA', new InterleavedBufferAttribute(instanceBuffer, 3, 0)); // オフセット0から開始
     this.setAttribute('pointB', new InterleavedBufferAttribute(instanceBuffer, 3, 3)); // オフセット3から開始
     this.setAttribute('color', new InterleavedBufferAttribute(instanceBuffer, 3, 6)); // オフセット3から開始
     this.setAttribute('width', new InterleavedBufferAttribute(instanceBuffer, 1, 9)); // オフセット3から開始
+    this.setAttribute('lineIndex', new InterleavedBufferAttribute(instanceBuffer, 1, 10)); // オフセット3から開始
 
 
     //

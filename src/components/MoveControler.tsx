@@ -35,7 +35,8 @@ function MoveControler(){
 			let index = parseInt(nowIndex)
 			console.log("index:",index)
 			console.log(viewerObjects[index])
-			const edge_end = viewerObjects[index].points[1]
+			//const edge_end = viewerObjects[index].points[1]
+			const edge_end = viewerObjects[index].points.slice(-1)[0][1]
 			setHeadPosition([edge_end.x, edge_end.y, edge_end.z])
 			setViewControl((prev:any)=>{
   	    const new_prev = {...prev}
