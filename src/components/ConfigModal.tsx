@@ -6,7 +6,7 @@ import { useShallow } from "zustand/react/shallow"
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { Canvas} from '@react-three/fiber'
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei'
-import { Vector3 } from 'three'
+import { Vector3, Euler} from 'three'
 
 import useGcodeStateStore from "../stores/gcodeStore";
 
