@@ -1,12 +1,12 @@
 //import { useRecoilState } from "recoil"
 //import { filamentConfigState } from "../atoms/ConfigState"
-import {useState, useRef} from "react"
+import { useRef } from "react"
 import useConfigStore from "../stores/configStore"
 import { useShallow } from "zustand/react/shallow"
-import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { Canvas} from '@react-three/fiber'
-import { OrthographicCamera, PerspectiveCamera, Grid, OrbitControls, GizmoHelper, GizmoViewport} from '@react-three/drei'
-import {Vector3, Euler, Mesh, MeshStandardMaterial} from 'three'
+import { PerspectiveCamera, OrbitControls } from '@react-three/drei'
+import { Vector3 } from 'three'
 
 import useGcodeStateStore from "../stores/gcodeStore";
 
@@ -27,14 +27,11 @@ function STLInput(){
     reader.addEventListener("load", () => {
       console.log("load stl")
       console.log(reader.result)
-      const stl_loader = new STLLoader()
-      const geometry = stl_loader.parse(reader.result);
-      console.log(geometry)
-      setGeometry(geometry)
-      //const mesh = new Mesh()
-      //mesh.geometry = geometry
-      //mesh.material = new MeshStandardMaterial({color:"red", wireframe:false})
-      //setMesh(mesh)
+      if(reader.result != null){
+        const stl_loader = new STLLoader()
+        const geometry = stl_loader.parse(reader.result);
+        setGeometry(geometry)
+      }
 
       event.target.value = "";
     });

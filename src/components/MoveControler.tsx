@@ -10,7 +10,7 @@ function MoveControler(){
 	const setHeadPosition = useGcodeStateStore((state)=> state.setHeadPosition)
 
 	const [nowIndex, setNowIndex] = useState("0")
-	const [minIndex, setMinIndex] = useState("0")
+	//const [minIndex, setMinIndex] = useState("0")
 	const [maxIndex, setMaxIndex] = useState("0")
 
   const [isRunning, setIsRunning] = useState(false); // タイマーの状態
@@ -129,7 +129,7 @@ function MoveControler(){
 					<span className="mr-2 text-gray-800">[s]</span>
 				</div>
 			</div>
-			<input type="range" min={minIndex} max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
+			<input type="range" min="0" max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
     </div>
   )
 }
