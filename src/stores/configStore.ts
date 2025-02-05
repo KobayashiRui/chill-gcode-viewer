@@ -8,11 +8,14 @@ type FilamentConfig = {
 }
 
 type Config = {
+    showConfigModal: boolean;
     filamentConfig: FilamentConfig;
     setFilamentConfig: (config_key:string, new_value:string) => void;
+    setShowConfigModal: (show: boolean) => void
 }
 
 export const useConfigStore = create<Config>()((set) => ({
+    showConfigModal: false,
     filamentConfig: {
         filamentDiameter: '1.75', filamentDensity: '1.0', 
         filamentCost: '1000', filamentReelWeight: '1000'},
@@ -23,7 +26,8 @@ export const useConfigStore = create<Config>()((set) => ({
             new_state.filamentConfig[config_key as keyof FilamentConfig] = new_value
         }
         return new_state
-    })
+    }),
+    setShowConfigModal: (show) => set(()=>({showConfigModal:show}))
 }))
 
 export default useConfigStore

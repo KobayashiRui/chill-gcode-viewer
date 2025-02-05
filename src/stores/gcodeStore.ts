@@ -24,7 +24,7 @@ type GcodeState = {
     enableLineSelect: boolean;
     viewControl: ViewControl;
     selectedRow: SelectedRow;
-    headMesh: any;
+    headGeometry: any;
     enableHead: boolean;
     headPosition: [number, number, number];
 
@@ -35,7 +35,7 @@ type GcodeState = {
     setViewControl: ( updater: (prev:ViewControl) => ViewControl) => void;
     resetViewControl : () => void;
     setSelectedRow: (selectedRow: SelectedRow) => void;
-    setHeadMesh: (headMesh: any) => void;
+    setHeadGeometry: (headGeometry: any) => void;
     setEnableHead: (enableHead:boolean) => void;
     setHeadPosition: (headPosition: [number, number, number]) => void;
 }
@@ -47,7 +47,7 @@ const useGcodeStateStore = create<GcodeState>()((set) => ({
     enableLineSelect: false,
     viewControl: {mode:0, startLayer:0, endLayer:0},
     selectedRow: {from:1, to:1},
-    headMesh: null,
+    headGeometry: null,
     enableHead: false,
     headPosition: [0.0, 0.0, 0.0],
 
@@ -58,7 +58,7 @@ const useGcodeStateStore = create<GcodeState>()((set) => ({
     setViewControl: (updater) => set((state) => ({viewControl: updater(state.viewControl)})),
     resetViewControl: () => set(() => ({viewControl: {mode:0, startLayer:0, endLayer:0}})),
     setSelectedRow: (selectedRow) => set(() => ({selectedRow: selectedRow})),
-    setHeadMesh: (headMesh) => set(() => ({headMesh: headMesh})),
+    setHeadGeometry: (headGometry) => set(() => ({headGeometry: headGometry})),
     setEnableHead: (enableHead) => set(() => ({enableHead:enableHead})),
     setHeadPosition: (headPosition) => set(() => ({headPosition: headPosition})),
 }))

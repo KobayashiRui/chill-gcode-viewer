@@ -1,13 +1,13 @@
 //import { useRecoilState } from "recoil"
 //import { filamentConfigState } from "../atoms/ConfigState"
-import { useRef } from "react"
-import useConfigStore from "../stores/configStore"
+import { useEffect, useRef } from "react"
 import { useShallow } from "zustand/react/shallow"
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { Canvas} from '@react-three/fiber'
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei'
 import { Vector3, Euler} from 'three'
 
+import useConfigStore from "../stores/configStore"
 import useGcodeStateStore from "../stores/gcodeStore";
 
 
@@ -72,6 +72,12 @@ export default function ConfigModal(){
 
   //const [filamentConfig, setFilamentConfig] = useRecoilState(filamentConfigState)
   const [filamentConfig, setFilamentConfig] = useConfigStore(useShallow((state) => [state.filamentConfig, state.setFilamentConfig]))
+  const showConfigModal = useConfigStore((state)=>state.showConfigModal)
+  const setShowConfigModal = useConfigStore((state)=>state.setShowConfigModal)
+
+  const modalClose = () => {
+    setShowConfigModal(false)
+  }
 
   return (
     <>
@@ -176,14 +182,16 @@ export default function ConfigModal(){
             </div>
             <div>
               <h2 className="font-bold text-lg mb-2">Head model</h2>
-              <STLInput></STLInput>
+              { showConfigModal &&
+                <STLInput></STLInput>
+              }
 
             </div>
           </div>
           <div className="mb-4 bor">
             <div className="modal-action">
               <form method="dialog">
-                <button className="btn">Close</button>
+                <button className="btn" onClick={modalClose}>Close</button>
               </form>
             </div>
           </div>

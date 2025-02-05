@@ -1,10 +1,15 @@
+import useConfigStore from "../stores/configStore";
+
 export default function Header({item1}:any){
+
+ const setShowConfigModal = useConfigStore((state)=>state.setShowConfigModal)
 
   const onConfigModal = () => {
     const dialog = document.getElementById('config_modal');
 
     if (dialog instanceof HTMLDialogElement) {
       dialog.showModal();
+      setShowConfigModal(true)
     } else {
       console.error("Dialog element is not an instance of HTMLDialogElement");
     }
