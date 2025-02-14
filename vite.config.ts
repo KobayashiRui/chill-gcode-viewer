@@ -26,6 +26,6 @@ export default defineConfig(async () => ({
     },
   },
   base: process.env.GITHUB_PAGES
-    ? 'REPOSITORY_NAME' // レポジトリ名を設定
+    ? 'chill-gcode-viewer' // レポジトリ名を設定
     : './'
 }));
