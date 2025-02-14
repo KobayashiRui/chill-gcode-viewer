@@ -1,6 +1,6 @@
 [package]
 name = "chil-gcode-viewer"
-version = "0.5.3"
+version = "0.5.4"
 description = "Chill gcode viewer"
 authors = ["Rui Kobayashi"]
 edition = "2021"

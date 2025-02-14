@@ -104,10 +104,8 @@ function MoveControler(){
     };
   }, []);
 
-  const IntersectionCheck = () => {
-    
-
-  }
+  //const IntersectionCheck = () => {
+  //}
 
 
   return (
@@ -151,25 +149,7 @@ function MoveControler(){
 
         </div>
     	</div>
-			<div className="flex items-center">
-    	  <span className="mr-2 text-gray-800">Move simulator</span> 
-				<button className="btn btn-sm btn-circle mx-2" onClick={handleStartSimulator}>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-5">
-					  <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
-					</svg>
-				</button>
-				<button className="btn btn-sm btn-squre mx-2" onClick={handleStopSimulator}>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-5">
-					  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-					</svg>
-				</button>
-				<div>
-					<span className="ml-2 mr-2 text-gray-800">Update Speed</span>
-					<input type="number" className="input input-bordered input-sm w-24" step={0.1} value={simSpeed} onChange={(e:any) => setSimSpeed(e.target.value)} />
-					<span className="mr-2 text-gray-800">[s]</span>
-				</div>
-			</div>
-			<input type="range" min="0" max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
+		<input type="range" min="0" max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
     </div>
   )
 }

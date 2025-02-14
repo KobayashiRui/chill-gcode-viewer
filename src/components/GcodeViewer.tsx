@@ -16,7 +16,7 @@ function GcodeViewer({hidden, height, width}:any) {
   //const [viewerObjects, _setViewerObjects] = useRecoilState(viewerObjectsState)
   const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
   const cameraMode = useViewSettingStore((state)=>state.cameraMode)
-  const headMesh = useGcodeStateStore((state)=>state.headMesh)
+  const headGeometry = useGcodeStateStore((state)=>state.headGeometry)
   const enableHead = useGcodeStateStore((state)=> state.enableHead)
   const headPosition = useGcodeStateStore((state)=> state.headPosition)
 
@@ -67,8 +67,10 @@ function GcodeViewer({hidden, height, width}:any) {
           lineSegments={viewerObjects}
         ></Line3>
         {
-          (enableHead && headMesh) &&
-          <primitive object={headMesh} position={headPosition}></primitive>
+          (enableHead && headGeometry) &&
+          <mesh geometry={headGeometry} position={headPosition}>
+            <meshStandardMaterial color="orange"></meshStandardMaterial>
+          </mesh>
         }
         <OrbitControls makeDefault></OrbitControls>
         <axesHelper args={[50]} />

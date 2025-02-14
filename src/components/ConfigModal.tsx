@@ -1,6 +1,6 @@
 //import { useRecoilState } from "recoil"
 //import { filamentConfigState } from "../atoms/ConfigState"
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { useShallow } from "zustand/react/shallow"
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { Canvas} from '@react-three/fiber'
