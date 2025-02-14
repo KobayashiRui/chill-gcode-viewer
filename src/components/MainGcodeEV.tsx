@@ -23,6 +23,11 @@ import ConfigModal from "./ConfigModal"
 import ViewSetting from "./ViewSetting";
 import MoveControler from "./MoveControler";
 
+function isTauri(): boolean {
+  return typeof window !== "undefined" && "__TAURI__" in window;
+}
+
+
 function secToDayTime(seconds:number) {
   const day = Math.floor(seconds / 86400);
   const hour = Math.floor(seconds % 86400 / 3600);
@@ -138,15 +143,32 @@ function MainGcodeEV() {
   }
 
   const handleOutputFile = async (_event:React.ChangeEvent<HTMLOutputElement>) => {
-    const filePath = await save({
-      filters: [{
-        name: "Gcode",
-        extensions: ['gcode']
-      }]
-    });
-    console.log("selected path:", filePath);
-    if(filePath !== null){
-      await fs.writeTextFile(filePath, gcodeData)
+    if (isTauri()){
+      const filePath = await save({
+        filters: [{
+          name: "Gcode",
+          extensions: ['gcode']
+        }]
+      });
+      console.log("selected path:", filePath);
+      if(filePath !== null){
+        await fs.writeTextFile(filePath, gcodeData)
+      }
+    }else{
+      try {
+        const fileName = prompt("Enter file name:", "output.gcode");
+        if (!fileName) return; // キャンセル時は何もしない
+        const blob = new Blob([gcodeData], { type: "text/plain" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = fileName; // Web ではファイル名を直接指定
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        console.log("File downloaded successfully in Web.");
+      } catch (error) {
+        console.error("Failed to download file in Web:", error);
+      }
     }
   }
 
