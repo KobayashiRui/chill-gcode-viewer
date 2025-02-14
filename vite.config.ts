@@ -25,4 +25,7 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
+  base: process.env.GITHUB_PAGES
+    ? 'REPOSITORY_NAME' // レポジトリ名を設定
+    : './'
 }));
