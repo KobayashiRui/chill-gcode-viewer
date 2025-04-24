@@ -18,7 +18,7 @@ export default function Header({item1}:any){
   return(
     <>
       <div className="navbar bg-base-100">
-        <div className="items-start mx-3">
+        <div className="navbar-start mx-3">
           <h1 className="text-sky-500 text-2xl">Chill Gcode Viewer</h1>
           <div className="flex items-center space-x-4 mx-8">
             {item1}
@@ -31,7 +31,7 @@ export default function Header({item1}:any){
             </button>
           </div>
         </div>
-        <div className="items-end">
+        <div className="navbar-end">
         </div>
       </div>
     </>
