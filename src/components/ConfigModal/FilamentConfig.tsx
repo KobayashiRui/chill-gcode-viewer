@@ -1,5 +1,26 @@
+import { useState } from "react";
 import useFilamentStore from "../../stores/filamentStore";
 import { useShallow } from "zustand/react/shallow";
+
+
+function transformData(value: number): string;
+function transformData(value: string): number;
+// 実装
+function transformData(value: string | number): string | number {
+  if (typeof value === "number") {
+    // 数値を文字列に変換
+    return String(value);
+  }else {
+    // 文字列を数値に変換
+    const parsedValue = Number(value);
+    if (isNaN(parsedValue)) {
+      return 0.0;
+    }else{
+      return parsedValue; // 文字列を数値に変換
+    }
+  }
+}
+
 
 export default function FilamentConfig(){
   const {filaments, addFilament, removeFilament, updateFilament} = useFilamentStore(
@@ -11,6 +32,39 @@ export default function FilamentConfig(){
     }))
   );
 
+  const [filamentId, setFilamentId] = useState<string>("");
+  const [filamentName, setFilamentName] = useState<string>("");
+  const [filamentDiameter, setFilamentDiameter] = useState<string>("");
+  const [filamentDensity, setFilamentDensity] = useState<string>("");
+  const [filemantCost, setFilamentCost] = useState<string>("");
+  const [filamentReelWeight, setFilamentReelWeight] = useState<string>("");
+
+  const handleChangeFilament = (uuid:string) => {
+    if(uuid !== ""){
+      setFilamentId(uuid);
+      setFilamentName(filaments[uuid].filamentName);
+      setFilamentDiameter(transformData(filaments[uuid].filamentDiameter));
+      setFilamentDensity(transformData(filaments[uuid].filamentDensity));
+      setFilamentCost(transformData(filaments[uuid].filamentCost));
+      setFilamentReelWeight(transformData(filaments[uuid].filamentReelWeight));
+    }else{
+      setFilamentId("");
+      setFilamentName("");
+      setFilamentDiameter("");
+      setFilamentDensity("");
+      setFilamentCost("");
+      setFilamentReelWeight("");
+    }
+  }
+
+  const handleAddFilament = () => {
+
+
+  }
+
+  const handleUpdateFilament = () => {
+  }
+  
   return(
     <div className="flex w-full">
       <div className="grow flex flex-col">
@@ -18,6 +72,8 @@ export default function FilamentConfig(){
           <legend className="fieldset-legend font-bold text-lg">Selet Filament</legend>
           <select
             className="select select-primary"
+            value={filamentId}
+            onChange={(e) => handleChangeFilament(e.target.value)}
           >
             <option value="">New Filament</option>
             {Object.keys(filaments).map((uuid) => (
@@ -33,8 +89,27 @@ export default function FilamentConfig(){
           <input
             type="text"
             className="input"
-            placeholder="Printer Name"
+            placeholder="Filament Name"
+            value={filamentName}
+            onChange={(e)=> setFilamentName(e.target.value)}
           />
+        </fieldset>
+
+        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-md border p-4">
+          <legend className="fieldset-legend font-bold text-lg">Filament config</legend>
+          <div className="grid grid-cols-2 gap-x-2 gap-y-2">
+            <div>
+              <label className="label">Filament Diameter</label>
+              <input
+                type="number"
+                className="input"
+                placeholder="1.75"
+                value={filamentDiameter}
+                onChange={(e) => setFilamentDiameter(e.target.value)}
+              />
+            </div>
+
+          </div>
         </fieldset>
       </div>
     </div>

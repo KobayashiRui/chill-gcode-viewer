@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 type FilamentConfig = {
   filamentName: string;
-  filamentDiameter: string;
-  filamentDensity: string;
-  filamentCost: string;
-  filamentReelWeight: string;
+  filamentDiameter: number;
+  filamentDensity: number;
+  filamentCost: number;
+  filamentReelWeight: number;
 };
 
 type FilamentStore = {

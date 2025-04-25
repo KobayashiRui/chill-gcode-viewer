@@ -82,6 +82,7 @@ function moveConfigReducer(
   }
 }
 
+//TODO : 型の定義をもっとシンプルに
 function transformData<T extends Record<string, string | number>>(
   config: Record<keyof T, string | number>
 ): T {
@@ -98,7 +99,7 @@ function transformData<T extends Record<string, string | number>>(
         case "string":{
           let new_value = Number(config[key]);
           if (isNaN(new_value)) {
-            throw new Error(`Invalid value for ${key}: "${config[key]}" is not a number.`);
+            return 0.0;
           }
           return new_value
         }
@@ -106,7 +107,6 @@ function transformData<T extends Record<string, string | number>>(
     })()
     convertedConfig[key as keyof T] = new_value as T[keyof T];
   }
-
   return convertedConfig;
 }
 
@@ -121,8 +121,8 @@ export default function PrinterConfig() {
     }))
   );
 
-  const [printerId, setPrinterId] = useState("");
-  const [printerName, setPrinterName] = useState("");
+  const [printerId, setPrinterId] = useState<string>("");
+  const [printerName, setPrinterName] = useState<string>("");
   const [headModel, setHeadModel] = useState<ArrayBuffer | null>(null);
   const [bedConfig, dispatchBedConfig] = useReducer(bedConfigReducer, initialBedConfig);
   const [moveConfig, dispatchMoveConfig] = useReducer(moveConfigReducer, initialMoveConfig);
@@ -211,9 +211,9 @@ export default function PrinterConfig() {
         <fieldset className="fieldset w-md">
           <legend className="fieldset-legend font-bold text-lg">Select Printer</legend>
           <select
+            className="select select-primary"
             value={printerId}
             onChange={(e) => handleChangePrinter(e.target.value)}
-            className="select select-primary"
           >
             <option value="">New Printer</option>
             {Object.keys(printers).map((uuid) => (
