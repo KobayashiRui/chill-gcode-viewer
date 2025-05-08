@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from "zustand/middleware"
 import { v4 as uuidv4 } from 'uuid';
 
 export type BedConfig = {
@@ -48,35 +49,41 @@ const defaultPrinterConfig: PrinterConfig = {
   headModel: null,
 }
 
-const usePrinterStore = create<PrinterStore>((set) => ({
-  printers: {
-    "default": defaultPrinterConfig, // デフォルトのプリンター設定を追加
-  },
-  addPrinter: (printerConfig) => {
-    const uuid = uuidv4(); // UUIDを生成
-    set((state) => {
-      return {
+const usePrinterStore = create<PrinterStore>()(
+  persist((set) => ({
+    printers: {
+      "default": defaultPrinterConfig, // デフォルトのプリンター設定を追加
+    },
+    addPrinter: (printerConfig) => {
+      const uuid = uuidv4(); // UUIDを生成
+      set((state) => {
+        return {
+          printers: {
+            ...state.printers,
+            [uuid]: printerConfig,
+          },
+        };
+      })
+      return uuid
+    },
+    removePrinter: (uuid) =>
+      set((state) => {
+        const { [uuid]: _, ...rest } = state.printers; // 指定したUUIDを除外
+        return { printers: rest };
+      }),
+    updatePrinter: (uuid, printerConfig) =>
+      set((state) => ({
         printers: {
           ...state.printers,
           [uuid]: printerConfig,
         },
-      };
-    })
-    return uuid
-  },
-  removePrinter: (uuid) =>
-    set((state) => {
-      const { [uuid]: _, ...rest } = state.printers; // 指定したUUIDを除外
-      return { printers: rest };
+      })),
     }),
-  updatePrinter: (uuid, printerConfig) =>
-    set((state) => ({
-      printers: {
-        ...state.printers,
-        [uuid]: printerConfig,
-      },
-    })),
-}));
+    {
+      name: "printers-storage"
+    }
+  )
+);
 
 export default usePrinterStore;
 

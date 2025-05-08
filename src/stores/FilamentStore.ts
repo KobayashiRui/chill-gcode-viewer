@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from "zustand/middleware"
 import { v4 as uuidv4 } from 'uuid';
 
 export type FilamentConfig = {
@@ -24,32 +25,38 @@ const defaultFilamentConfig: FilamentConfig = {
   filamentReelWeight: 1000,
 };
 
-const useFilamentStore = create<FilamentStore>((set) => ({
-  filaments: {
-    "default": defaultFilamentConfig, // デフォルトのフィラメント設定を追加
-  },
-  addFilament: (filament_config) =>
-    set((state) => {
-      const uuid = uuidv4(); // UUIDを生成
-      return {
+const useFilamentStore = create<FilamentStore>()(
+  persist((set) => ({
+    filaments: {
+      "default": defaultFilamentConfig, // デフォルトのフィラメント設定を追加
+    },
+    addFilament: (filament_config) =>
+      set((state) => {
+        const uuid = uuidv4(); // UUIDを生成
+        return {
+          filaments: {
+            ...state.filaments,
+            [uuid]: filament_config,
+          },
+        };
+      }),
+    removeFilament: (uuid) =>
+      set((state) => {
+        const { [uuid]: _, ...rest } = state.filaments; // 指定したUUIDを除外
+        return { filaments: rest };
+      }),
+    updateFilament: (uuid, filament_config) =>
+      set((state) => ({
         filaments: {
           ...state.filaments,
           [uuid]: filament_config,
         },
-      };
+      })),
     }),
-  removeFilament: (uuid) =>
-    set((state) => {
-      const { [uuid]: _, ...rest } = state.filaments; // 指定したUUIDを除外
-      return { filaments: rest };
-    }),
-  updateFilament: (uuid, filament_config) =>
-    set((state) => ({
-      filaments: {
-        ...state.filaments,
-        [uuid]: filament_config,
-      },
-    })),
-}));
+    {
+      name: "filaments-storage"
+    }
+  )
+);
 
 export default useFilamentStore;
