@@ -28,6 +28,7 @@ type GcodeState = {
     enableHead: boolean;
     headPosition: [number, number, number];
 
+
     setGcodeData: (gcodeData: string) => void;
     setViewerObjects: (viewerObjects:any[]) => void;
     setPrintResult: (printResult: PrintResult) => void;

@@ -12,8 +12,8 @@ import fragmentShader from './shaders/frag_shader.glsl?raw'
 
 //import { viewControlState, selectedRowState, enableLineSelectState} from '../../atoms/GcodeState';
 //import { viewSettingState } from '../../atoms/ViewSettingState';
-import useGcodeStateStore from '../../stores/gcodeStore';
-import useViewSettingStore from '../../stores/viewSettingStore';
+import useGcodeStateStore from '@/stores/GcodeStore';
+import useViewSettingStore from '@/stores/ViewSettingStore';
 import { useShallow } from 'zustand/react/shallow'
 
 const MyCustomMaterial = shaderMaterial(

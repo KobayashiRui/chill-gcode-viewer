@@ -1,9 +1,15 @@
 import {useEffect, useState, useRef} from "react"
-import useGcodeStateStore from "../stores/gcodeStore"
+import useGcodeStateStore from "@/stores/GcodeStore"
 import { useShallow } from "zustand/react/shallow"
 
-function MoveControler(){
+function MoveControler({width}:any){
+
 	const [enableHead, setEnableHead] = useGcodeStateStore(useShallow((state)=>[state.enableHead, state.setEnableHead]))
+
+	useEffect(()=>{
+		console.log("MoveControler width:", width)
+	},[width])
+
 
 	const setViewControl = useGcodeStateStore((state)=> state.setViewControl)
   	const viewerObjects = useGcodeStateStore((state)=> state.viewerObjects)
@@ -20,7 +26,7 @@ function MoveControler(){
 
 	useEffect(()=>{
 		if (viewerObjects) {
-			setMaxIndex(viewerObjects.length.toString())
+			setMaxIndex((viewerObjects.length-1).toString())
 		}
 	}, [viewerObjects])
 
@@ -31,10 +37,7 @@ function MoveControler(){
 
 	useEffect(()=>{
 		if(viewerObjects && viewerObjects.length > 0){
-			console.log(viewerObjects)
 			let index = parseInt(nowIndex)
-			console.log("index:",index)
-			console.log(viewerObjects[index])
 			//const edge_end = viewerObjects[index].points[1]
 			const edge_end = viewerObjects[index].points.slice(-1)[0][1]
 			setHeadPosition([edge_end.x, edge_end.y, edge_end.z])
@@ -109,7 +112,10 @@ function MoveControler(){
 
 
   return (
-    <div className="absolute w-1/2 bottom-2 flex flex-col gap-2 bg-gray-200 m-4 rounded-md p-4 z-40">
+    <div 
+		className="absolute bottom-2 flex flex-col gap-2 bg-gray-300 dark:bg-gray-500 p-2 rounded-md z-40"
+		style={{width:`${width+5}px`}}
+	>
 		<h2 className="text-gray-900 font-bold">Move Controler</h2>
     	<div className="flex justify-between">
         <div className="flex flex-col">
@@ -149,7 +155,7 @@ function MoveControler(){
 
         </div>
     	</div>
-		<input type="range" min="0" max={maxIndex} value={nowIndex} className="range" onChange={handleChangeIndex} />
+		<input type="range" min="0" max={maxIndex} value={nowIndex} className="range w-full" onChange={handleChangeIndex} />
     </div>
   )
 }

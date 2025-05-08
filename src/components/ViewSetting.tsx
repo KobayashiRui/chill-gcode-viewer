@@ -1,5 +1,5 @@
 //import { viewSettingState, viewCameraSettingState} from '../atoms/ViewSettingState';
-import useViewSettingStore from '../stores/viewSettingStore';
+import useViewSettingStore from '@/stores/ViewSettingStore';
 
 import Orthographic from '../assets/orthographic.svg'
 import Perspective from '../assets/perspective.svg'
@@ -42,7 +42,7 @@ export default function ViewSetting(){
   const [cameraMode, setCameraMode] = useViewSettingStore(useShallow((state)=> [state.cameraMode, state.setCameraMode]))
 
   return (
-    <div className="absolute flex flex-col gap-2 bg-gray-200 m-4 rounded-md p-4 z-40">
+    <div className="absolute flex flex-col gap-2 bg-gray-300 dark:bg-gray-500 m-4 rounded-md p-4 z-40">
       <div className="flex items-center">
       <img src={Perspective} className="w-8 h-8"></img>
       <input type="checkbox" className="toggle toggle-sm toggle-info" checked={cameraMode} onChange={(e)=>{setCameraMode(e.target.checked)}}/>

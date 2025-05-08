@@ -1,9 +1,7 @@
 import React, {useEffect, useRef, forwardRef, useImperativeHandle} from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-//import { javascript } from '@codemirror/lang-javascript';
-//import { useRecoilState } from 'recoil';
-//import { gcodeState, selectedRowState } from '../atoms/GcodeState';
-import useGcodeStateStore from '../stores/gcodeStore';
+import useViewSettingStore from '@/stores/ViewSettingStore';
+import useGcodeStateStore from '../stores/GcodeStore';
 import { useShallow } from 'zustand/react/shallow'
 
 const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
@@ -11,6 +9,7 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
 
   //const [value, setValue] = useState(gcode_data);
   //const [value, setValue] = useRecoilState(gcodeState)
+  const darkMode = useViewSettingStore((state)=> state.darkMode);
   const [gcodeData, setGcodeData] = useGcodeStateStore(useShallow((state) => [state.gcodeData, state.setGcodeData]))
   const [selectedRow, setSelectedRow] = useGcodeStateStore(useShallow((state) => [state.selectedRow, state.setSelectedRow]))
 
@@ -84,7 +83,12 @@ const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {
   return (
     <div>
     {
-      <CodeMirror ref={editorRef} hidden={hidden} height={`${height}px`} width={`${width}px`} value={gcodeData} onChange={onChange} onUpdate={onUpdate}/>
+      <CodeMirror 
+        theme={darkMode ? "dark": "light"}
+        ref={editorRef} hidden={hidden} 
+        height={`${height}px`} width={`${width}px`} 
+        value={gcodeData} onChange={onChange} onUpdate={onUpdate}
+      />
     }
     </div>
   )
