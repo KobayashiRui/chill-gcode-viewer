@@ -25,23 +25,45 @@ export type PrinterConfig = {
 
 type PrinterStore = {
   printers: Record<string, PrinterConfig>; // UUIDをキーにしたプリンターの管理
-  addPrinter: (printerConfig: PrinterConfig) => void;
+  addPrinter: (printerConfig: PrinterConfig) => string;
   removePrinter: (uuid: string) => void;
   updatePrinter: (uuid: string, printerConfig: PrinterConfig) => void;
 };
 
+const defaultPrinterConfig: PrinterConfig = {
+  printerName: 'Default Printer',
+  bedConfig: {
+    xWidth: 100,
+    yWidth: 100,
+    xOffset: 0,
+    yOffset: 0,
+  },
+  moveConfig: {
+    xMin: 0,
+    xMax: 100,
+    yMin: 0,
+    yMax: 100,
+    zHeight: 100,
+  },
+  headModel: null,
+}
+
 const usePrinterStore = create<PrinterStore>((set) => ({
-  printers: {},
-  addPrinter: (printerConfig) =>
+  printers: {
+    "default": defaultPrinterConfig, // デフォルトのプリンター設定を追加
+  },
+  addPrinter: (printerConfig) => {
+    const uuid = uuidv4(); // UUIDを生成
     set((state) => {
-      const uuid = uuidv4(); // UUIDを生成
       return {
         printers: {
           ...state.printers,
           [uuid]: printerConfig,
         },
       };
-    }),
+    })
+    return uuid
+  },
   removePrinter: (uuid) =>
     set((state) => {
       const { [uuid]: _, ...rest } = state.printers; // 指定したUUIDを除外

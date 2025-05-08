@@ -1,7 +1,5 @@
 import {create} from 'zustand';
 
-
-
 type viewSettingState = {
     
     lineViewState: Record<string, boolean>;
@@ -12,7 +10,6 @@ type viewSettingState = {
     setLineViewState: (lineType: string) => void;
     setCameraMode: (cameraMode:boolean) => void;
 }
-
 
 const useViewSettingStore = create<viewSettingState>()((set) => ({
     lineViewState: {"moveLine": true, "extrudeLine": true},

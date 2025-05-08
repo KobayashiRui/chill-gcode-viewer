@@ -1,9 +1,10 @@
-import type { PrinterConfig, BedConfig, MoveConfig } from "../../stores/printerStore";
+import type { PrinterConfig, BedConfig, MoveConfig } from "@/stores/PrinterStore";
+import usePrinterStore from "@/stores/PrinterStore";
 
 import STLInput from "./STLInput";
-import usePrinterStore from "../../stores/printerStore";
 import { useState, useReducer } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { remove } from "three/examples/jsm/libs/tween.module.js";
 
 type BedConfigState = {
   xWidth: string;
@@ -164,14 +165,15 @@ export default function PrinterConfig() {
       console.log(validatedMoveConfig)
 
       // プリンターを追加
-      addPrinter({
+      const new_printer_id = addPrinter({
         printerName,
         bedConfig: validatedBedConfig,
         moveConfig: validatedMoveConfig,
         headModel: headModel,
       });
+      console.log("Printer add successfully: ", new_printer_id);
+      setPrinterId(new_printer_id);
 
-      console.log("Printer add successfully!");
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -204,6 +206,11 @@ export default function PrinterConfig() {
       }
     }
   };
+
+  const handleRemovePrinter = () => {
+    removePrinter(printerId);
+    setPrinterId("");
+  }
 
   return (
     <div className="flex flex-row w-full">
@@ -367,7 +374,7 @@ export default function PrinterConfig() {
           {printerId !== "" && (
             <button
               className="btn btn-error"
-              onClick={() => removePrinter(printerId)}
+              onClick={handleRemovePrinter}
             >
               Delete This Printer
             </button>

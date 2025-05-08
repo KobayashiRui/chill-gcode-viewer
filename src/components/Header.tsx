@@ -1,4 +1,4 @@
-import useConfigStore from "../stores/configStore";
+import useConfigStore from "../stores/ConfigStore";
 
 export default function Header({item1}:any){
 

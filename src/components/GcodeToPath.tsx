@@ -1,7 +1,14 @@
 import {Vector3} from 'three';
+import { useMemo } from 'react';
 //import { useRecoilValue, useRecoilState} from "recoil"
 //import { gcodeState, viewerObjectsState, printResultState, viewControlState} from '../atoms/GcodeState';
-import useGcodeStateStore from '../stores/gcodeStore';
+import useGcodeStateStore from '@/stores/GcodeStore';
+import useConfigStore from '@/stores/ConfigStore';
+
+import usePrinterStore from '@/stores/PrinterStore';
+import useFilamentStore from '@/stores/FilamentStore';
+import usePrintResultStore, {BoundingBox} from '@/stores/PrintResultStore';
+import useViewSettingStore from '@/stores/ViewSettingStore';
 
 
 //TODO: support Z, E
@@ -71,6 +78,7 @@ class ArcSupport{
   }
 }
 
+
 function GcodeToPath(){
   //const gcodeData = useRecoilValue(gcodeState)
   const gcodeData = useGcodeStateStore((state)=> state.gcodeData)
@@ -79,8 +87,18 @@ function GcodeToPath(){
   //const [_viewControl, setViewControl] = useRecoilState(viewControlState)
 
   const setViewerObjects = useGcodeStateStore((state) => state.setViewerObjects)
-  const setPrintResult = useGcodeStateStore((state) => state.setPrintResult)
+  //const setPrintResult = useGcodeStateStore((state) => state.setPrintResult)
+  const setPrintResult = usePrintResultStore((state) => state.setPrintResult)
   const resetViewControl = useGcodeStateStore((state) => state.resetViewControl)
+
+  const printerList = usePrinterStore((state) => state.printers)
+  const usePrinterId = useConfigStore((state) => state.usePrinterId)
+  const printer = useMemo(() => printerList[usePrinterId], [printerList, usePrinterId])
+
+  const filamentList = useFilamentStore((state) => state.filaments)
+  const useFilamentId = useConfigStore((state) => state.useFilamentId)
+  const filament = useMemo(() => filamentList[useFilamentId], [filamentList, useFilamentId])
+
 
 
   const handleLoadGcodeToPath = () => {
@@ -100,6 +118,8 @@ function GcodeToPath(){
     let filament_length = 0.0
     let pos_absolute = true // 0: absolute, 1: relative
     let e_absolute = true 
+
+    let bounding_box = new BoundingBox()
 
     const gcode_lines = gcodeData.split('\n')
     for(let i =0; i < gcode_lines.length; i++){
@@ -177,6 +197,10 @@ function GcodeToPath(){
             const type = new_e > 0.0 ? 1 : 0
             new_lines.push({"index": i, "type": type, "points": [[now_pos.clone(), target_pos.clone()]], "color": line_color, "width": line_width })
             now_pos.copy(target_pos);
+
+            //TODO: check bounding box
+            bounding_box.updatePoint(now_pos)
+
             break;
           }
           case "G2": {
@@ -235,6 +259,9 @@ function GcodeToPath(){
 
             //now_pos.copy(target_pos);
             now_pos.copy(target_pos)
+
+            //TODO: check bounding box
+            bounding_box.updatePoint(now_pos)
             
             break;
           }
@@ -300,7 +327,11 @@ function GcodeToPath(){
       }
     }
     setViewerObjects(new_lines)
-    setPrintResult({printTime: all_time, filamentLength: filament_length, filamentWeight: 0})
+    //setPrintResult({printTime: all_time, filamentLength: filament_length, filamentWeight: 0})
+    setPrintResult(
+      printer, filament,
+      all_time, filament_length, bounding_box
+    )
     console.log("end gcode to path")
 
 

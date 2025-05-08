@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 
-type FilamentConfig = {
+export type FilamentConfig = {
   filamentName: string;
   filamentDiameter: number;
   filamentDensity: number;
@@ -16,8 +16,18 @@ type FilamentStore = {
   updateFilament: (uuid: string, filament_config: FilamentConfig) => void;
 };
 
+const defaultFilamentConfig: FilamentConfig = {
+  filamentName: 'Default Filament',
+  filamentDiameter: 1.75,
+  filamentDensity: 1.0,
+  filamentCost: 1000,
+  filamentReelWeight: 1000,
+};
+
 const useFilamentStore = create<FilamentStore>((set) => ({
-  filaments: {},
+  filaments: {
+    "default": defaultFilamentConfig, // デフォルトのフィラメント設定を追加
+  },
   addFilament: (filament_config) =>
     set((state) => {
       const uuid = uuidv4(); // UUIDを生成

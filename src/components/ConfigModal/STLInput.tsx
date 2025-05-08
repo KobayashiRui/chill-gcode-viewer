@@ -5,7 +5,7 @@ import { Canvas} from '@react-three/fiber'
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei'
 import { Vector3, Euler} from 'three'
 
-import useGcodeStateStore from "../../stores/gcodeStore";
+import useGcodeStateStore from "../../stores/GcodeStore";
 
 type STLInputProps = {
   headModel: ArrayBuffer | null;

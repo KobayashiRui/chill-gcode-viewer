@@ -11,6 +11,12 @@ export default defineConfig(async () => ({
   //    plugins: [tailwindcss()],
   //  },
   //},
+  resolve: {
+    alias: {
+      // 1. resolve absolute path
+      "@": "/src",
+    },
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

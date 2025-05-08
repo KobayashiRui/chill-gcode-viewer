@@ -1,5 +1,5 @@
 //import { viewSettingState, viewCameraSettingState} from '../atoms/ViewSettingState';
-import useViewSettingStore from '../stores/viewSettingStore';
+import useViewSettingStore from '../stores/ViewSettingStore';
 
 import Orthographic from '../assets/orthographic.svg'
 import Perspective from '../assets/perspective.svg'

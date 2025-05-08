@@ -4,8 +4,10 @@ import {useEffect, useState, useRef, useMemo } from "react";
 //import { gcodeState, printResultState, viewerObjectsState, viewControlState, enableLineSelectState } from '../atoms/GcodeState';
 //import { filamentConfigState } from "../atoms/ConfigState"
 
-import useGcodeStateStore from "../stores/gcodeStore";
-import useConfigStore from "../stores/configStore";
+import useGcodeStateStore from "@/stores/GcodeStore";
+import useConfigStore from "@/stores/ConfigStore";
+import useFilamentStore from "@/stores/FilamentStore";
+import usePrintResultStore from "@/stores/PrintResultStore";
 //import useViewSettingStore from "../stores/viewSettingStore";
 
 import { useShallow } from 'zustand/react/shallow'
@@ -22,6 +24,7 @@ import GcodeToPath from "./GcodeToPath"
 import ConfigModal from "./ConfigModal"
 import ViewSetting from "./ViewSetting";
 import MoveControler from "./MoveControler";
+
 
 function isTauri(): boolean {
   return typeof window !== "undefined" && "__TAURI__" in window;
@@ -84,31 +87,29 @@ function MainGcodeEV() {
 
   const [gcodeData, setGcodeData] = useGcodeStateStore(useShallow((state) => [state.gcodeData, state.setGcodeData]))
 
-  const printResult = useGcodeStateStore((state) => state.printResult)
-  const filamentConfig = useConfigStore((state)=> state.filamentConfig)
+  //const printResult = useGcodeStateStore((state) => state.printResult)
+  //const filamentId = useConfigStore((state)=> state.useFilamentId)
+  //const filamentList = useFilamentStore((state) => state.filaments)
+  const [printTime, filamentLength, filamentWeight, filamentReel, rangeError] = usePrintResultStore(
+    useShallow((state) => [
+      state.printTime, 
+      state.filamentLength,
+      state.filamentWeight,
+      state.filamentReel,
+      state.rangeError
+    ])
+  )
 
+  // ステータス
+  // 造形時間
+  const memoPrintTime = useMemo(() => secToDayTime(printTime), [printTime])
 
-  const memoPrintTime = useMemo(() => secToDayTime(printResult.printTime), [printResult.printTime])
-
-  const memoFilamentWeight = useMemo(()=>{
-    const fl = printResult.filamentLength * 0.1 //mm to cm
-    const dm = Number(filamentConfig.filamentDiameter) / 2.0  * 0.1 //mm to cm
-    const dens = Number(filamentConfig.filamentDensity) // g /cm3
-    const weight = Math.PI * dm * dm  * fl * dens //g
-    return weight
-  }, [printResult, filamentConfig])
-
+  // フィラメント重さ(kg, g)
   const memoFilamentWeightShow = useMemo(()=>{
-
-    const weight_kg = Math.floor(memoFilamentWeight/1000)
-    const weight_g = memoFilamentWeight - (weight_kg*1000)
+    const weight_kg = Math.floor(filamentWeight/1000)
+    const weight_g = filamentWeight - (weight_kg*1000)
     return `${weight_kg}kg ${weight_g.toFixed(2)}g`
-  }, [memoFilamentWeight])
-
-  const memoFilamentReel = useMemo(() =>{
-    const frw = Number(filamentConfig.filamentReelWeight)
-    return memoFilamentWeight / frw
-  }, [memoFilamentWeight])
+  }, [filamentWeight])
 
   useEffect(() => {
     function handleResize() {
@@ -237,8 +238,8 @@ function MainGcodeEV() {
                 handleOutputFile={handleOutputFile}
               ></FileOutput>
             </div>
-            <div className="flex flex-wrap items-center border p-0.5">
-              <div className="flex text-black text-nowrap mx-3 my-1">
+            <div className="flex flex-wrap items-center border p-0.5 text-xs">
+              <div className="flex text-black text-nowrap mx-1 my-1">
                 <div className="bg-emerald-500 rounded-l-lg p-1">
                   造形時間
                 </div>
@@ -246,15 +247,18 @@ function MainGcodeEV() {
                   {memoPrintTime}
                 </div>
               </div>
-              <div className="flex text-black text-nowrap mx-3 my-1">
+
+            </div>
+            <div className="flex flex-wrap items-center border p-0.5 text-xs">
+              <div className="flex text-black text-nowrap mx-1 my-1">
                 <div className="bg-teal-500 rounded-l-lg p-1">
                   フィラメント長さ
                 </div>
                 <div className="bg-teal-200 rounded-r-lg p-1">
-                  {printResult.filamentLength.toFixed(2)}mm
+                  {filamentLength.toFixed(2)}mm
                 </div>
               </div>
-              <div className="flex text-black text-nowrap mx-3 my-1">
+              <div className="flex text-black text-nowrap mx-1 my-1">
                 <div className="bg-teal-500 rounded-l-lg p-1">
                   フィラメント重量
                 </div>
@@ -262,12 +266,12 @@ function MainGcodeEV() {
                   {memoFilamentWeightShow}
                 </div>
               </div>
-              <div className="flex text-black text-nowrap mx-3 my-1">
+              <div className="flex text-black text-nowrap mx-1 my-1">
                 <div className="bg-teal-500 rounded-l-lg p-1">
                   リール数
                 </div>
                 <div className="bg-teal-200 rounded-r-lg p-1">
-                  {memoFilamentReel.toFixed(2)}リール
+                  {filamentReel.toFixed(2)}リール
                 </div>
               </div>
             </div>
@@ -319,7 +323,7 @@ function MainGcodeEV() {
           <div className="flex-1 border p-0.5">
             <div ref={viewerContainerRef} className="h-full w-full">
               <ViewSetting></ViewSetting>
-              <MoveControler></MoveControler>
+              <MoveControler width={viewerWidth}></MoveControler>
               <GcodeViewer hidden={contentsHidden} height={viewerHeight} width={viewerWidth}></GcodeViewer>
             </div>
           </div>

@@ -3,7 +3,7 @@ import CodeMirror from '@uiw/react-codemirror';
 //import { javascript } from '@codemirror/lang-javascript';
 //import { useRecoilState } from 'recoil';
 //import { gcodeState, selectedRowState } from '../atoms/GcodeState';
-import useGcodeStateStore from '../stores/gcodeStore';
+import useGcodeStateStore from '../stores/GcodeStore';
 import { useShallow } from 'zustand/react/shallow'
 
 const GcodeEditor = forwardRef(({hidden, height, width}:any, ref:any) => {

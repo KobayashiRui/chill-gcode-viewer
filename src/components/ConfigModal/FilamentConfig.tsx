@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useFilamentStore from "../../stores/filamentStore";
+import useFilamentStore from "@/stores/FilamentStore";
 import { useShallow } from "zustand/react/shallow";
 
 
