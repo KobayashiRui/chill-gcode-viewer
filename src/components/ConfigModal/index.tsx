@@ -1,3 +1,4 @@
+import useViewSettingStore from "@/stores/ViewSettingStore"
 import useConfigStore from "@/stores/ConfigStore"
 
 import FilamentConfig from "./FilamentConfig"
@@ -7,8 +8,8 @@ import ViewerConfig from "./ViewrConfig"
 export default function ConfigModal(){
 
   //const [filamentConfig, setFilamentConfig] = useRecoilState(filamentConfigState)
-  const showConfigModal = useConfigStore((state)=>state.showConfigModal)
-  const setShowConfigModal = useConfigStore((state)=>state.setShowConfigModal)
+  const showConfigModal = useViewSettingStore((state)=>state.showConfigModal)
+  const setShowConfigModal = useViewSettingStore((state)=>state.setShowConfigModal)
 
   const modalClose = () => {
     setShowConfigModal(false)

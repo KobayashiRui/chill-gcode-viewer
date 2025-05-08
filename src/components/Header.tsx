@@ -1,8 +1,9 @@
-import useConfigStore from "../stores/ConfigStore";
+import useViewSettingStore from "@/stores/ViewSettingStore";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header({item1}:any){
 
- const setShowConfigModal = useConfigStore((state)=>state.setShowConfigModal)
+ const setShowConfigModal = useViewSettingStore((state)=>state.setShowConfigModal)
 
   const onConfigModal = () => {
     const dialog = document.getElementById('config_modal');
@@ -32,6 +33,7 @@ export default function Header({item1}:any){
           </div>
         </div>
         <div className="navbar-end">
+          <ThemeToggle></ThemeToggle>
         </div>
       </div>
     </>
