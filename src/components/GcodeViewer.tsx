@@ -8,7 +8,7 @@ import { Bvh } from '@react-three/drei'
 //import {viewCameraSettingState} from '../atoms/ViewSettingState';
 
 import usePrinterStore from '@/stores/PrinterStore'
-import useFilamentStore from '@/stores/FilamentStore'
+//import useFilamentStore from '@/stores/FilamentStore'
 import useConfigStore from '@/stores/ConfigStore'
 
 import useGcodeStateStore from '@/stores/GcodeStore'
@@ -24,7 +24,7 @@ function GcodeViewer({hidden, height, width}:any) {
   const enableHead = useGcodeStateStore((state)=> state.enableHead)
   const headPosition = useGcodeStateStore((state)=> state.headPosition)
 
-  const canvas_size:any = [1000, 1000] //mm単位
+  //const canvas_size:any = [1000, 1000] //mm単位
 
   const cameraRef = useRef<any>(null);
 
@@ -33,9 +33,9 @@ function GcodeViewer({hidden, height, width}:any) {
   const [cameraRotation, setCameraRotation] = useState(new Euler(1.0, 0.13, 0.08))
 
   const printerList = usePrinterStore((state) => state.printers)
-  const filamentList = useFilamentStore((state) => state.filaments)
+  //const filamentList = useFilamentStore((state) => state.filaments)
   const usePrinterId = useConfigStore((state) => state.usePrinterId)
-  const useFilamentId = useConfigStore((state) => state.useFilamentId)
+  //const useFilamentId = useConfigStore((state) => state.useFilamentId)
 
   const printer = useMemo(()=> printerList[usePrinterId], [printerList, usePrinterId])
 

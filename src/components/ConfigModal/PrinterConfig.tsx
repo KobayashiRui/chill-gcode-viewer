@@ -4,7 +4,7 @@ import usePrinterStore from "@/stores/PrinterStore";
 import STLInput from "./STLInput";
 import { useState, useReducer } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { remove } from "three/examples/jsm/libs/tween.module.js";
+//import { remove } from "three/examples/jsm/libs/tween.module.js";
 
 type BedConfigState = {
   xWidth: string;

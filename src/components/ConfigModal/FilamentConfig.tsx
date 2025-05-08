@@ -36,7 +36,7 @@ export default function FilamentConfig(){
   const [filamentName, setFilamentName] = useState<string>("");
   const [filamentDiameter, setFilamentDiameter] = useState<string>("");
   const [filamentDensity, setFilamentDensity] = useState<string>("");
-  const [filemantCost, setFilamentCost] = useState<string>("");
+  const [filamentCost, setFilamentCost] = useState<string>("");
   const [filamentReelWeight, setFilamentReelWeight] = useState<string>("");
 
   const handleChangeFilament = (uuid:string) => {
@@ -58,11 +58,43 @@ export default function FilamentConfig(){
   }
 
   const handleAddFilament = () => {
-
-
+    try{
+      const new_filament_id = addFilament({
+        filamentName,
+        filamentDiameter: transformData(filamentDiameter),
+        filamentDensity: transformData(filamentDensity),
+        filamentCost: transformData(filamentCost),
+        filamentReelWeight:transformData(filamentReelWeight)
+      })
+      setFilamentId(new_filament_id);
+    } catch(error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        alert(error.message); // ユーザーにエラーを通知
+      }
+    }
   }
 
   const handleUpdateFilament = () => {
+    try{
+      updateFilament(filamentId, {
+        filamentName,
+        filamentDiameter: transformData(filamentDiameter),
+        filamentDensity: transformData(filamentDensity),
+        filamentCost: transformData(filamentCost),
+        filamentReelWeight:transformData(filamentReelWeight)
+      })
+    } catch(error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        alert(error.message); // ユーザーにエラーを通知
+      }
+    }
+  }
+
+  const handleRemoveFilament = () => {
+    removeFilament(filamentId)
+    setFilamentId("")
   }
   
   return(
@@ -95,10 +127,10 @@ export default function FilamentConfig(){
           />
         </fieldset>
 
-        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-md border p-4">
+        <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4">
           <legend className="fieldset-legend font-bold text-lg">Filament config</legend>
           <div className="grid grid-cols-2 gap-x-2 gap-y-2">
-            <div>
+            <div className="col-span-2">
               <label className="label">Filament Diameter</label>
               <input
                 type="number"
@@ -109,8 +141,61 @@ export default function FilamentConfig(){
               />
             </div>
 
+            <div className="col-span-2">
+              <label className="label">Filament Density</label>
+              <input
+                type="number"
+                className="input"
+                placeholder="1.0"
+                value={filamentDensity}
+                onChange={(e) => setFilamentDensity(e.target.value)}
+              />
+            </div>
+
+            <div className="col-span-2">
+              <label className="label">Filament Cost</label>
+              <input
+                type="number"
+                className="input"
+                placeholder="1.0"
+                value={filamentCost}
+                onChange={(e) => setFilamentCost(e.target.value)}
+              />
+            </div>
+
+            <div className="col-span-2">
+              <label className="label">Filament Reel Wight</label>
+              <input
+                type="number"
+                className="input"
+                placeholder="1.0"
+                value={filamentReelWeight}
+                onChange={(e) => setFilamentReelWeight(e.target.value)}
+              />
+            </div>
+
           </div>
         </fieldset>
+
+        <div className="flex flex-row w-md gap-x-2 py-4">
+          {filamentId !== "" && (
+            <button className="btn btn-accent" onClick={handleUpdateFilament}>
+              Update Filament
+            </button>
+          )}
+          <button className="btn btn-success" onClick={handleAddFilament}>
+            Add New Filament
+          </button>
+          {filamentId !== "" && (
+            <button
+              className="btn btn-error"
+              onClick={handleRemoveFilament}
+            >
+              Delete This Filament
+            </button>
+          )}
+        </div>
+
       </div>
     </div>
   );

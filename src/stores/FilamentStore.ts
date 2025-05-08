@@ -12,7 +12,7 @@ export type FilamentConfig = {
 
 type FilamentStore = {
   filaments: Record<string, FilamentConfig>; // UUIDをキーにしたフィラメントの管理
-  addFilament: (filament_config: Omit<FilamentConfig, 'filamentName'> & { filamentName: string }) => void;
+  addFilament: (filament_config: FilamentConfig) => string;
   removeFilament: (uuid: string) => void;
   updateFilament: (uuid: string, filament_config: FilamentConfig) => void;
 };
@@ -30,16 +30,18 @@ const useFilamentStore = create<FilamentStore>()(
     filaments: {
       "default": defaultFilamentConfig, // デフォルトのフィラメント設定を追加
     },
-    addFilament: (filament_config) =>
+    addFilament: (filament_config) =>{
+      const uuid = uuidv4(); // UUIDを生成
       set((state) => {
-        const uuid = uuidv4(); // UUIDを生成
         return {
           filaments: {
             ...state.filaments,
             [uuid]: filament_config,
           },
         };
-      }),
+      })
+      return uuid
+    },
     removeFilament: (uuid) =>
       set((state) => {
         const { [uuid]: _, ...rest } = state.filaments; // 指定したUUIDを除外

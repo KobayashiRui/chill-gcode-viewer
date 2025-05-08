@@ -5,8 +5,8 @@ import {useEffect, useState, useRef, useMemo } from "react";
 //import { filamentConfigState } from "../atoms/ConfigState"
 
 import useGcodeStateStore from "@/stores/GcodeStore";
-import useConfigStore from "@/stores/ConfigStore";
-import useFilamentStore from "@/stores/FilamentStore";
+//import useConfigStore from "@/stores/ConfigStore";
+//import useFilamentStore from "@/stores/FilamentStore";
 import usePrintResultStore from "@/stores/PrintResultStore";
 //import useViewSettingStore from "../stores/viewSettingStore";
 

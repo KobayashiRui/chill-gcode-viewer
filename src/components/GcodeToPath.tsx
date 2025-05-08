@@ -8,7 +8,7 @@ import useConfigStore from '@/stores/ConfigStore';
 import usePrinterStore from '@/stores/PrinterStore';
 import useFilamentStore from '@/stores/FilamentStore';
 import usePrintResultStore, {BoundingBox} from '@/stores/PrintResultStore';
-import useViewSettingStore from '@/stores/ViewSettingStore';
+//import useViewSettingStore from '@/stores/ViewSettingStore';
 
 
 //TODO: support Z, E
