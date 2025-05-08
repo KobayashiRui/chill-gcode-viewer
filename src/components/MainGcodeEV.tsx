@@ -56,6 +56,24 @@ function FileInputButton(handler:any){
   )
 }
 
+function StateBox({title, error}:{title:string, error:boolean}) {
+  return (
+    <>
+    {
+      error &&
+        <div className="flex text-black text-nowrap mx-1 my-1">
+            <div className="bg-red-500 rounded-l-lg p-1">
+              {title}
+            </div>
+            <div className="bg-red-300 rounded-r-lg p-1">
+              Error
+            </div>
+        </div>
+    }
+    </>
+  )
+}
+
 function MainGcodeEV() {
   const editorContainerRef = useRef<any>(null);
   const viewerContainerRef = useRef<any>(null);
@@ -240,13 +258,22 @@ function MainGcodeEV() {
             </div>
             <div className="flex flex-wrap items-center border p-0.5 text-xs">
               <div className="flex text-black text-nowrap mx-1 my-1">
-                <div className="bg-emerald-500 rounded-l-lg p-1">
+                <div className="bg-sky-500 rounded-l-lg p-1">
                   造形時間
                 </div>
-                <div className="bg-emerald-200 rounded-r-lg p-1">
+                <div className="bg-sky-200 rounded-r-lg p-1">
                   {memoPrintTime}
                 </div>
               </div>
+
+              <StateBox title={"X min"} error={rangeError.xRangeError[0]}></StateBox>
+              <StateBox title={"X max"} error={rangeError.xRangeError[1]}></StateBox>
+
+              <StateBox title={"Y min"} error={rangeError.yRangeError[0]}></StateBox>
+              <StateBox title={"Y max"} error={rangeError.yRangeError[1]}></StateBox>
+
+              <StateBox title={"Z min"} error={rangeError.zRangeError[0]}></StateBox>
+              <StateBox title={"Z max"} error={rangeError.zRangeError[1]}></StateBox>
 
             </div>
             <div className="flex flex-wrap items-center border p-0.5 text-xs">

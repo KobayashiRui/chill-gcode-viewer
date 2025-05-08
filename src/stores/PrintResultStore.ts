@@ -61,11 +61,14 @@ const usePrintResultStore = create<PrintResult>()((set)=> ({
   filamentReel: 0,
   rangeError: {xRangeError: [false, false], yRangeError: [false, false], zRangeError: [false, false]},
   setPrintResult: (printer, filament, print_time, filament_length, move_bounding_box) => {
-    const filament_weight = (filament_length * filament.filamentDensity * Math.PI * Math.pow(filament.filamentDiameter / 2, 2)) / 1000;
+    const filament_length_cm = filament_length * 0.1;
+    const filament_radius_cm = filament.filamentDiameter / 2.0 * 0.1;
+    //const filament_weight = (filament_length * filament.filamentDensity * Math.PI * Math.pow(filament.filamentDiameter / 2, 2)) / 1000;
+    const filament_weight = filament.filamentDensity * filament_length_cm * Math.PI * Math.pow(filament_radius_cm, 2)
     const filament_reel = filament_weight / filament.filamentReelWeight;
     const xrange_error = moveRangeCheck(move_bounding_box.min.x, move_bounding_box.max.x, printer.moveConfig.xMin, printer.moveConfig.xMax);
     const yrange_error = moveRangeCheck(move_bounding_box.min.y, move_bounding_box.max.y, printer.moveConfig.yMin, printer.moveConfig.yMax);
-    const zrange_error = moveRangeCheck(move_bounding_box.min.z, move_bounding_box.max.z, printer.moveConfig.zHeight, printer.moveConfig.zHeight);
+    const zrange_error = moveRangeCheck(move_bounding_box.min.z, move_bounding_box.max.z, -100.0, printer.moveConfig.zHeight);
 
     set(() => ({
       printTime: print_time,
