@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import useFilamentStore from "@/stores/FilamentStore";
 import { useShallow } from "zustand/react/shallow";
-
+import { ExportJsonFile, ImportJsonFile } from "@/utils/fileIO";
 
 function transformData(value: number): string;
 function transformData(value: string): number;
@@ -21,16 +21,19 @@ function transformData(value: string | number): string | number {
   }
 }
 
-
 export default function FilamentConfig(){
-  const {filaments, addFilament, removeFilament, updateFilament} = useFilamentStore(
+  const {filaments, addFilament, removeFilament, updateFilament, exportFilamentJson, importFilamentJson} = useFilamentStore(
     useShallow((state) => ({
       filaments: state.filaments,
       addFilament: state.addFilament,
       removeFilament: state.removeFilament,
       updateFilament: state.updateFilament,
+      exportFilamentJson: state.exportFilamentJson,
+      importFilamentJson: state.importFilamentJson,
     }))
   );
+
+  const inputJsonFileRef = useRef<HTMLInputElement>(null);
 
   const [filamentId, setFilamentId] = useState<string>("");
   const [filamentName, setFilamentName] = useState<string>("");
@@ -94,16 +97,46 @@ export default function FilamentConfig(){
 
   const handleRemoveFilament = () => {
     removeFilament(filamentId)
-    setFilamentId("")
+    handleChangeFilament("")
   }
+
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Import")
+    const json_data = await ImportJsonFile(event)
+    console.log(json_data)
+    importFilamentJson(json_data)
+  }
+
+  const handleAllExport = () => {
+    console.log("All export")
+    const json_data = exportFilamentJson(null)
+    console.log(json_data)
+    ExportJsonFile(json_data, "all_printer")
+
+  }
+
+  const handleSelectedExport = () => {
+    console.log("Select export")
+    console.log(filaments[filamentId])
+    const json_data = exportFilamentJson(filamentId)
+    console.log(json_data)
+    ExportJsonFile(json_data, filamentName)
+  }
+
   
   return(
     <div className="flex w-full">
       <div className="grow flex flex-col">
+        <div className="flex flex-row gap-2 my-2">
+          <button className="btn btn-xs btn-soft btn-accent" onClick={()=>inputJsonFileRef.current?.click()}>Import</button>
+          <button className="btn btn-xs btn-soft btn-primary" onClick={handleAllExport}>ALL Export</button>
+          <button className="btn btn-xs btn-soft btn-secondary" onClick={handleSelectedExport}>Selected Export</button>
+          <input type="file" ref={inputJsonFileRef} accept=".json" style={{ display: 'none' }} onChange={handleImport} />
+        </div>
         <fieldset className="fieldset w-md">
-          <legend className="fieldset-legend font-bold text-lg">Selet Filament</legend>
+          <legend className="fieldset-legend font-bold">Selet Filament</legend>
           <select
-            className="select select-primary"
+            className="select select-sm select-primary"
             value={filamentId}
             onChange={(e) => handleChangeFilament(e.target.value)}
           >
@@ -120,7 +153,7 @@ export default function FilamentConfig(){
           <legend className="fieldset-legend font-bold text-lg">Filament Name</legend>
           <input
             type="text"
-            className="input"
+            className="input input-xs"
             placeholder="Filament Name"
             value={filamentName}
             onChange={(e)=> setFilamentName(e.target.value)}
@@ -134,7 +167,7 @@ export default function FilamentConfig(){
               <label className="label">Filament Diameter</label>
               <input
                 type="number"
-                className="input"
+                className="input input-xs"
                 placeholder="1.75"
                 value={filamentDiameter}
                 onChange={(e) => setFilamentDiameter(e.target.value)}
@@ -145,7 +178,7 @@ export default function FilamentConfig(){
               <label className="label">Filament Density</label>
               <input
                 type="number"
-                className="input"
+                className="input input-xs"
                 placeholder="1.0"
                 value={filamentDensity}
                 onChange={(e) => setFilamentDensity(e.target.value)}
@@ -156,7 +189,7 @@ export default function FilamentConfig(){
               <label className="label">Filament Cost</label>
               <input
                 type="number"
-                className="input"
+                className="input input-xs"
                 placeholder="1.0"
                 value={filamentCost}
                 onChange={(e) => setFilamentCost(e.target.value)}
@@ -167,7 +200,7 @@ export default function FilamentConfig(){
               <label className="label">Filament Reel Wight</label>
               <input
                 type="number"
-                className="input"
+                className="input input-xs"
                 placeholder="1.0"
                 value={filamentReelWeight}
                 onChange={(e) => setFilamentReelWeight(e.target.value)}
@@ -179,16 +212,16 @@ export default function FilamentConfig(){
 
         <div className="flex flex-row w-md gap-x-2 py-4">
           {filamentId !== "" && (
-            <button className="btn btn-accent" onClick={handleUpdateFilament}>
+            <button className="btn btn-xs btn-accent" onClick={handleUpdateFilament}>
               Update Filament
             </button>
           )}
-          <button className="btn btn-success" onClick={handleAddFilament}>
+          <button className="btn btn-xs btn-success" onClick={handleAddFilament}>
             Add New Filament
           </button>
           {filamentId !== "" && (
             <button
-              className="btn btn-error"
+              className="btn btn-xs btn-error"
               onClick={handleRemoveFilament}
             >
               Delete This Filament

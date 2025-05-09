@@ -24,11 +24,7 @@ import GcodeToPath from "./GcodeToPath"
 import ConfigModal from "./ConfigModal"
 import ViewSetting from "./ViewSetting";
 import MoveControler from "./MoveControler";
-
-
-function isTauri(): boolean {
-  return typeof window !== "undefined" && "__TAURI__" in window;
-}
+import { isTauri } from "@/utils/IsTauri";
 
 
 function secToDayTime(seconds:number) {
