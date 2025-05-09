@@ -15,6 +15,8 @@ type FilamentStore = {
   addFilament: (filament_config: FilamentConfig) => string;
   removeFilament: (uuid: string) => void;
   updateFilament: (uuid: string, filament_config: FilamentConfig) => void;
+  exportFilamentJson: (uuid: string | null) => string;
+  importFilamentJson: (filaments:any) => void;
 };
 
 const defaultFilamentConfig: FilamentConfig = {
@@ -26,7 +28,7 @@ const defaultFilamentConfig: FilamentConfig = {
 };
 
 const useFilamentStore = create<FilamentStore>()(
-  persist((set) => ({
+  persist((set, get) => ({
     filaments: {
       "default": defaultFilamentConfig, // デフォルトのフィラメント設定を追加
     },
@@ -54,6 +56,22 @@ const useFilamentStore = create<FilamentStore>()(
           [uuid]: filament_config,
         },
       })),
+    exportFilamentJson: (uuid) => {
+      const {filaments} = get()
+      if(uuid === null){
+        return JSON.stringify(filaments)
+      }else{
+        return JSON.stringify({[uuid]: filaments[uuid]})
+      }
+    },
+    importFilamentJson: (filaments) => {
+      set((state)=>({
+        filaments:{
+          ...state.filaments,
+          ...filaments,
+        }
+      }))
+    }, 
     }),
     {
       name: "filaments-storage"

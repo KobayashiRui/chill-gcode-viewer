@@ -17,6 +17,7 @@ export type MoveConfig = {
   zHeight: number;
 };
 
+
 export type PrinterConfig = {
   printerName: string; 
   bedConfig: BedConfig;
@@ -29,6 +30,8 @@ type PrinterStore = {
   addPrinter: (printerConfig: PrinterConfig) => string;
   removePrinter: (uuid: string) => void;
   updatePrinter: (uuid: string, printerConfig: PrinterConfig) => void;
+  exportPrinterJson: (uuid: string | null) => string;
+  importPrinterJson: (printers:any) => void;
 };
 
 const defaultPrinterConfig: PrinterConfig = {
@@ -50,7 +53,7 @@ const defaultPrinterConfig: PrinterConfig = {
 }
 
 const usePrinterStore = create<PrinterStore>()(
-  persist((set) => ({
+  persist((set, get) => ({
     printers: {
       "default": defaultPrinterConfig, // デフォルトのプリンター設定を追加
     },
@@ -78,6 +81,22 @@ const usePrinterStore = create<PrinterStore>()(
           [uuid]: printerConfig,
         },
       })),
+    exportPrinterJson: (uuid) => {
+      const {printers} = get();
+      if(uuid === null){
+        return JSON.stringify(printers)
+      }else{
+        return JSON.stringify({[uuid]:printers[uuid]})
+      }
+    },
+    importPrinterJson: (printers)=> {
+      set((state)=>({
+        printers:{
+          ...state.printers,
+          ...printers,
+        }
+      }))
+    },
     }),
     {
       name: "printers-storage"

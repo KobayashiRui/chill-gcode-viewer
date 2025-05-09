@@ -3,7 +3,8 @@ import { useRef, useEffect } from "react"
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { Canvas} from '@react-three/fiber'
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei'
-import { Vector3, Euler} from 'three'
+import { Vector3, Euler, ConeGeometry, CylinderGeometry, BufferGeometry} from 'three'
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 import useGcodeStateStore from "../../stores/GcodeStore";
 
@@ -11,6 +12,29 @@ type STLInputProps = {
   headModel: ArrayBuffer | null;
   setHeadModel: (model: ArrayBuffer | null) => void;
 }
+
+function SimpleHeadGeometry(): BufferGeometry{
+  // パラメータ
+  const coneHeight = 3;
+  const cylinderHeight = 10;
+  const radius = 2;
+
+  // --- Cone: 底面が原点、先端が -Z
+  const cone = new ConeGeometry(radius, coneHeight, 32);
+  cone.rotateX(-Math.PI / 2); // +Y → +Z へ向ける
+  cone.translate(0, 0, coneHeight / 2); // 先端を -Z に持ってくる（底面が原点）
+
+  // --- Cylinder: Coneの底から +Z に配置
+  const cylinder = new CylinderGeometry(radius, radius, cylinderHeight, 32);
+  cylinder.rotateX(Math.PI / 2); // +Y → +Z へ向ける
+  cylinder.translate(0, 0, (cylinderHeight / 2) + coneHeight); // 底面を原点に合わせる
+
+  // --- Merge
+  const merged = mergeGeometries([cone, cylinder]);
+
+  return merged
+}
+
 export default function STLInput(props: STLInputProps){
   const {headModel, setHeadModel} = props
 
@@ -25,7 +49,9 @@ export default function STLInput(props: STLInputProps){
       const geometry = stl_loader.parse(headModel);
       setGeometry(geometry)
     }else{
-      setGeometry(null)
+      console.log(headModel)
+      const geometry = SimpleHeadGeometry()
+      setGeometry(geometry)
     }
 
   }, [headModel])
@@ -65,7 +91,7 @@ export default function STLInput(props: STLInputProps){
       <input type="file" ref={inputFileRef} style={{ display: 'none' }} onChange={handleInputFile} />
       <Canvas 
           className="border-2 border-sky-500 rounded-md"
-          style={{height: '500px', width: '80%'}}
+          style={{height: '400px', width: '80%'}}
         >
 
         <PerspectiveCamera makeDefault up={[0,0,1]} fov={75} position={new Vector3(100, 100, 100)} rotation={new Euler(1.0, 0.13, 0.08)} near={10} far={10000} />

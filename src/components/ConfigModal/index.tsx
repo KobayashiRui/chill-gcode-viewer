@@ -18,7 +18,10 @@ export default function ConfigModal(){
   return (
     <dialog id="config_modal" className="modal">
       <div className="modal-box w-11/12 max-w-full h-5/6 max-h-full ">
-        <h1 className="font-bold text-2xl text-emerald-500 mb-4">Chill Gcode Viewer Config</h1>
+        <form method="dialog">
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={modalClose}>✕</button>
+        </form>
+        <h1 className="font-bold text-xl text-emerald-500 mb-4">Chill Gcode Viewer Config</h1>
         <div className="tabs tabs-lift">
           <input type="radio" name="my_tabs_3" className="tab" aria-label="Viewer" />
           <div className="tab-content">
@@ -35,11 +38,6 @@ export default function ConfigModal(){
             <FilamentConfig></FilamentConfig>
           </div>
 
-        </div>
-        <div className="modal-action">
-          <form method="dialog">
-            <button className="btn" onClick={modalClose}>Close</button>
-          </form>
         </div>
       </div>
     </dialog>
